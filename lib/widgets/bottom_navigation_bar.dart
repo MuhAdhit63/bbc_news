@@ -1,6 +1,8 @@
+import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/utils/helper.dart';
 import 'package:bbc_news/views/detail_page.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex; // Tanda
@@ -48,9 +50,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
         child: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: onTap ?? (index) {
-            if (index == 0) _navigateToPage(context, 'Beranda');
+            if (index == 0) context.goNamed(RouteNames.home);
             if (index == 1) _navigateToPage(context, 'Semua Kategori');
-            if (index == 2) _navigateToPage(context, 'Profil');
+            if (index == 2) context.goNamed(RouteNames.profile);
           },
           type: BottomNavigationBarType.fixed,
           selectedItemColor: activeColor,

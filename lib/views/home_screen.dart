@@ -1,5 +1,7 @@
 // lib/views/main_page.dart
+import 'package:bbc_news/routes/route_names.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../models/article_model.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/category_button.dart';
@@ -83,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
           } else if (index == 1) {
             _navigateToDetail('Semua Kategori');
           } else if (index == 2) {
-            _navigateToDetail('Profil Pengguna');
+            context.goNamed(RouteNames.profile);
           }
         },
       ),

@@ -1,7 +1,17 @@
+import 'package:bbc_news/routes/route_names.dart';
+import 'package:bbc_news/widgets/bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  int _currentBottomNavIndex = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +41,20 @@ class ProfilePage extends StatelessWidget {
           _buildButtons(context, primaryColor),
           const SizedBox(height: 20),
         ],
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _currentBottomNavIndex,
+        onTap: (index) {
+          setState(() {
+            _currentBottomNavIndex = index;
+          });
+          if (index == 0) {
+            context.goNamed(RouteNames.home);
+          } else if (index == 1) {
+            _navigateToDetail('Semua Kategori');
+          } else if (index == 2) {
+          }
+        },
       ),
     );
   }
@@ -235,6 +259,10 @@ class ProfilePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _navigateToDetail(String category) {
+    // Implementasi navigasi ke detail
   }
 }
 
