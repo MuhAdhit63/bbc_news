@@ -21,7 +21,9 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: "BBC News",
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
+            fontFamily: 'Poppins',
+            visualDensity: VisualDensity.adaptivePlatformDensity,
             useMaterial3: true,
           ),
           routerConfig: AppRouter().goRouter,

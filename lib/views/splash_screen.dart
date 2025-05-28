@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:bbc_news/routes/route_names.dart';
+import 'package:bbc_news/utils/helper.dart';
 import 'package:bbc_news/views/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -26,13 +27,11 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
     )..repeat();
 
-    Future.delayed(
-      const Duration(seconds: 3), () {
-        if (mounted) {
-          context.goNamed(RouteNames.home);
-        }
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        context.goNamed(RouteNames.home);
       }
-    );
+    });
   }
 
   @override
@@ -44,25 +43,32 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              'assets/images/logo.png',
-              width: 300,
-              height: 300,
+      backgroundColor: AppColors.background,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/images/bg.jpg',
+            fit: BoxFit.cover,
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset('assets/images/logo.png', width: 300, height: 300),
+                AppSpacing.vertical(50.0),
+                RotationTransition(
+                  turns: _controller,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Color(0xFFD4AF37),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 50),
-            RotationTransition(
-              turns: _controller,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
