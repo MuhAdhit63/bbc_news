@@ -1,4 +1,6 @@
 import 'package:bbc_news/views/home_screen.dart';
+import 'package:bbc_news/views/login_page.dart';
+import 'package:bbc_news/views/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../views/splash_screen.dart';
@@ -31,6 +33,16 @@ class AppRouter {
           path: '/home',
           name: RouteNames.home,
           pageBuilder: (context, state) => MaterialPage(child: HomeScreen()),
+        ),
+        GoRoute(
+          path: '/login',
+          name: RouteNames.login,
+          pageBuilder: (context, state) => MaterialPage(child: LoginPage()),
+        ),
+        GoRoute(
+          path: '/register',
+          name: RouteNames.register,
+          pageBuilder: (context, state) => MaterialPage(child: RegisterPage()),
         ),
       ],
     );
