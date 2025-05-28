@@ -1,5 +1,6 @@
 import 'package:bbc_news/views/home_screen.dart';
 import 'package:bbc_news/views/login_page.dart';
+import 'package:bbc_news/views/profil_screen.dart';
 import 'package:bbc_news/views/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -32,7 +33,9 @@ class AppRouter {
         GoRoute(
           path: '/home',
           name: RouteNames.home,
-          pageBuilder: (context, state) => MaterialPage(child: HomeScreen()),
+          pageBuilder:
+              (context, state) =>
+                  MaterialPage(child: ProfilePage()), //dirubahhhhhhhh
         ),
         GoRoute(
           path: '/login',
