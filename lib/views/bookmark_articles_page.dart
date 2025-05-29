@@ -89,7 +89,7 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
-                color: Colors.black87, tes
+                color: Colors.black87,
               ),
             ),
           ),
