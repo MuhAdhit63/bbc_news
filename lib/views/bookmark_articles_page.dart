@@ -7,6 +7,16 @@ import '../models/article_model.dart';
 import '../widgets/news_card.dart';
 import '../widgets/bottom_navigation_bar.dart'; // Asumsi path ini benar
 
+class BookmarkedArticlesPageArgs {
+  final List<Article> allArticles;
+  final Function(String articleId) onToggleBookmark;
+
+  BookmarkedArticlesPageArgs({
+    required this.allArticles,
+    required this.onToggleBookmark,
+  });
+}
+
 class BookmarkedArticlesPage extends StatefulWidget {
   final List<Article> allArticles; // Menerima semua artikel
   final Function(String articleId) onToggleBookmark; // Fungsi untuk toggle bookmark dari MainPage
@@ -22,7 +32,7 @@ class BookmarkedArticlesPage extends StatefulWidget {
 }
 
 class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
-  int _currentBottomNavIndex = 0;
+  int _currentBottomNavIndex = 1;
   late List<Article> _bookmarkedArticles;
 
   @override

@@ -51,7 +51,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           currentIndex: currentIndex,
           onTap: onTap ?? (index) {
             if (index == 0) context.goNamed(RouteNames.home);
-            if (index == 1) _navigateToPage(context, 'Semua Kategori');
+            if (index == 1) context.goNamed(RouteNames.bookmark);
             if (index == 2) context.goNamed(RouteNames.profile);
           },
           type: BottomNavigationBarType.fixed,
@@ -67,9 +67,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
               label: 'Beranda',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_outlined),
-              activeIcon: Icon(Icons.grid_view_rounded),
-              label: 'Kategori',
+              icon: Icon(Icons.bookmark_outline),
+              activeIcon: Icon(Icons.bookmark),
+              label: 'Bookmark',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),

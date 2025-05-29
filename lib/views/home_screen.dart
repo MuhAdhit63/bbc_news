@@ -132,7 +132,13 @@ class _HomeScreenState extends State<HomeScreen> {
           if (index == 0) {
             // Anda sudah di Beranda atau bisa refresh/kembali ke atas
           } else if (index == 1) {
-            _navigateToDetail('Semua Kategori');
+            context.goNamed(
+              RouteNames.bookmark,
+              extra: BookmarkedArticlesPageArgs(
+                allArticles: _articles,
+                onToggleBookmark: _toggleBookmark,
+              )
+            );
           } else if (index == 2) {
             context.goNamed(RouteNames.profile);
           }

@@ -16,15 +16,22 @@ class AppRouter {
   static AppRouter get instance => _instance;
 
   factory AppRouter() {
-    _instance.goRouter = goRouterSetup();
+    // _instance.goRouter = goRouterSetup();
 
     return _instance;
   }
 
-  GoRouter? goRouter;
+  late final GoRouter goRouter = _setupRouter();
 
-  static GoRouter goRouterSetup() {
+  static GoRouter _setupRouter() {
+    // final args = BookmarkedArticlesPageArgs(
+    //   allArticles: [],
+    //   onToggleBookmark: (String articleId) {
+    //     // Implement toggle bookmark logic here
+    //   },
+    // );
     return GoRouter(
+      initialLocation: '/',
       routes: [
         GoRoute(
           path: '/',
@@ -51,7 +58,29 @@ class AppRouter {
           name: RouteNames.profile,
           pageBuilder: (context, state) => MaterialPage(child: ProfilePage()),
         ),
+        GoRoute(
+          path: '/bookmark',
+          name: RouteNames.bookmark,
+          pageBuilder: (context, GoRouterState state) {
+            final args = state.extra as BookmarkedArticlesPageArgs?;
 
+            if (args != null) {
+              return MaterialPage(
+                child: BookmarkedArticlesPage(
+                  allArticles: args.allArticles,
+                  onToggleBookmark: args.onToggleBookmark,
+                ),
+              );
+            } else {
+              return MaterialPage(
+                child: Scaffold(
+                  appBar: AppBar(title: Text("Error"),),
+                  body: Center(child: Text("Argumen....."),),
+                )
+              );
+            }
+          },
+        ),
       ],
     );
   }
