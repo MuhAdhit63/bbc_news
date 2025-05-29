@@ -2,6 +2,7 @@ import 'package:bbc_news/views/bookmark_articles_page.dart';
 import 'package:bbc_news/views/home_screen.dart';
 import 'package:bbc_news/views/login_page.dart';
 import 'package:bbc_news/views/profil_screen.dart';
+import 'package:bbc_news/views/reading_history_page.dart';
 import 'package:bbc_news/views/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -68,6 +69,30 @@ class AppRouter {
               return MaterialPage(
                 child: BookmarkedArticlesPage(
                   allArticles: args.allArticles,
+                  onToggleBookmark: args.onToggleBookmark,
+                ),
+              );
+            } else {
+              return MaterialPage(
+                child: Scaffold(
+                  appBar: AppBar(title: Text("Error"),),
+                  body: Center(child: Text("Argumen....."),),
+                )
+              );
+            }
+          },
+        ),
+        GoRoute(
+          path: '/history',
+          name: RouteNames.history,
+          pageBuilder: (context, GoRouterState state) {
+            final args = state.extra as ReadingHistoryPageArgs?;
+
+            if (args != null) {
+              return MaterialPage(
+                child: ReadingHistoryPage(
+                  readArticles: args.readArticles,
+                  onNavigateToDetail: args.onNavigateToDetail,
                   onToggleBookmark: args.onToggleBookmark,
                 ),
               );

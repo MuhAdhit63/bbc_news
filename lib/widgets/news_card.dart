@@ -7,20 +7,29 @@ import '../views/detail_page.dart';
 class NewsCard extends StatelessWidget {
   final Article article;
   final Function(String articleId) onToggleBookmark;
+  final VoidCallback onCardTap;
 
-  const NewsCard({Key? key, required this.article, required this.onToggleBookmark}) : super(key: key);
+  const NewsCard({
+    Key? key,
+    required this.article,
+    required this.onToggleBookmark,
+    required this.onCardTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        onCardTap();
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => NewsDetailPage(
-              article: article,
-              onToggleBookmark: onToggleBookmark,
-            )),
+            builder:
+                (context) => NewsDetailPage(
+                  article: article,
+                  onToggleBookmark: onToggleBookmark,
+                ),
+          ),
         );
       },
       child: Card(
@@ -41,11 +50,16 @@ class NewsCard extends StatelessWidget {
                 width: double.infinity,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return Container( // Placeholder jika gambar error
+                  return Container(
+                    // Placeholder jika gambar error
                     height: 180,
                     width: double.infinity,
                     color: Colors.grey[300],
-                    child: Icon(Icons.broken_image, color: Colors.grey[600], size: 50),
+                    child: Icon(
+                      Icons.broken_image,
+                      color: Colors.grey[600],
+                      size: 50,
+                    ),
                   );
                 },
               ),
@@ -57,13 +71,21 @@ class NewsCard extends StatelessWidget {
                 color: Colors.transparent,
                 child: IconButton(
                   icon: Icon(
-                    article.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                    color: article.isBookmarked ? Theme.of(context).colorScheme.primary : Colors.black,
+                    article.isBookmarked
+                        ? Icons.bookmark
+                        : Icons.bookmark_border,
+                    color:
+                        article.isBookmarked
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.black,
                     size: 28,
                   ),
                   onPressed: () => onToggleBookmark(article.id),
-                  tooltip: article.isBookmarked ? 'Hapus Bookmark' : 'Tambahkan Bookmark',
-                )
+                  tooltip:
+                      article.isBookmarked
+                          ? 'Hapus Bookmark'
+                          : 'Tambahkan Bookmark',
+                ),
               ),
             ),
             Padding(
@@ -73,10 +95,7 @@ class NewsCard extends StatelessWidget {
                 children: [
                   Text(
                     article.title,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),

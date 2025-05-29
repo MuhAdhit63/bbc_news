@@ -48,7 +48,7 @@ List<Article> dummyArticles = [
     isBookmarked: true,
   ),
   Article(
-    id: '2',
+    id: '3',
     title: 'Festival Budaya Konoha: Merayakan Keberagaman',
     summary: 'Festival budaya di Konoha menampilkan berbagai tradisi dan seni lokal, memperkuat identitas budaya dan komunitas.',
     imageUrl: 'assets/images/article3.png',

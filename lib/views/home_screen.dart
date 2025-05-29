@@ -1,6 +1,8 @@
 // lib/views/main_page.dart
 import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/views/bookmark_articles_page.dart';
+import 'package:bbc_news/views/news_detail_page.dart';
+import 'package:bbc_news/views/reading_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/article_model.dart';
@@ -17,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentBottomNavIndex = 0;
   late List<Article> _articles;
+  List<Article> _readHistoryArticles = [];
 
   @override
   void initState() {
@@ -53,7 +56,36 @@ class _HomeScreenState extends State<HomeScreen> {
         _articles[articleIndex].isBookmarked =
             !_articles[articleIndex].isBookmarked;
       }
+      final historyIndex = _readHistoryArticles.indexWhere((article) => article.id == articleId);
+      if (historyIndex != -1) {
+        _readHistoryArticles[historyIndex].isBookmarked = _articles[articleIndex].isBookmarked;
+      }
     });
+  }
+
+  void _addArticleToHistory(Article article) {
+    setState(() {
+      _readHistoryArticles.removeWhere((a) => a.id == article.id);
+      _readHistoryArticles.insert(0, article);
+
+      if (_readHistoryArticles.length > 10) {
+        _readHistoryArticles = _readHistoryArticles.sublist(0, 10);
+      }
+    });
+  }
+
+  void _navigateToNewsDetail(Article article) {
+    _addArticleToHistory(article);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NewsDetailPage(
+          article: article,
+          onToggleBookmark: _toggleBookmark,
+        ),
+      ),
+    );
+    
   }
 
   @override
@@ -115,6 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return NewsCard(
                     article: article,
                     onToggleBookmark: _toggleBookmark,
+                    onCardTap: () => _navigateToNewsDetail(article),
                   );
                 },
               ),
@@ -299,7 +332,17 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         } else if (pageName == "Riwayat Baca") {
-          _navigateToDetail("Riwayat Baca");
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => ReadingHistoryPage(
+                    readArticles: _readHistoryArticles,
+                    onNavigateToDetail: _navigateToNewsDetail,
+                    onToggleBookmark: _toggleBookmark,
+                  ),
+            ),
+          );
         }
       },
       borderRadius: BorderRadius.circular(20),

@@ -1,6 +1,7 @@
 // lib/views/bookmarked_articles_page.dart
 import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/utils/helper.dart';
+import 'package:bbc_news/views/news_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/article_model.dart';
@@ -34,6 +35,8 @@ class BookmarkedArticlesPage extends StatefulWidget {
 class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
   int _currentBottomNavIndex = 1;
   late List<Article> _bookmarkedArticles;
+  List<Article> _readHistoryArticles = [];
+
 
   @override
   void initState() {
@@ -62,6 +65,45 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
     // Perubahan pada widget.allArticles (karena isBookmarked diubah di MainPage) akan memicu didUpdateWidget
     // atau kita bisa langsung filter ulang di sini untuk efek instan jika MainPage tidak mengirim ulang widget tree
     _filterBookmarkedArticles();
+  }
+
+  void _addArticleToHistory(Article article) {
+    setState(() {
+      _readHistoryArticles.removeWhere((a) => a.id == article.id);
+      _readHistoryArticles.insert(0, article);
+
+      if (_readHistoryArticles.length > 10) {
+        _readHistoryArticles = _readHistoryArticles.sublist(0, 10);
+      }
+    });
+  }
+
+  void _toggleBookmark(String articleId) {
+    setState(() {
+      final articleIndex = _bookmarkedArticles.indexWhere((article) => article.id == articleId,);
+      if (articleIndex != -1) {
+        _bookmarkedArticles[articleIndex].isBookmarked =
+            !_bookmarkedArticles[articleIndex].isBookmarked;
+      }
+      final historyIndex = _readHistoryArticles.indexWhere((article) => article.id == articleId);
+      if (historyIndex != -1) {
+        _readHistoryArticles[historyIndex].isBookmarked = _bookmarkedArticles[articleIndex].isBookmarked;
+      }
+    });
+  }
+  
+  void _navigateToNewsDetail(Article article) {
+    _addArticleToHistory(article);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NewsDetailPage(
+          article: article,
+          onToggleBookmark: _toggleBookmark,
+        ),
+      ),
+    );
+    
   }
 
   @override
@@ -124,6 +166,7 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
                       return NewsCard(
                         article: article,
                         onToggleBookmark: (id) => _handleToggleBookmarkOnThisPage(article.id),
+                        onCardTap: () => _navigateToNewsDetail(article),
                       );
                     },
                   ),
