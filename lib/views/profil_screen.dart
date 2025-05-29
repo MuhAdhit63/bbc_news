@@ -40,7 +40,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _toggleBookmark(String articleId) {
     setState(() {
-      final articleIndex = _articles.indexWhere((article) => article.id == articleId,);
+      final articleIndex = _articles.indexWhere(
+        (article) => article.id == articleId,
+      );
       if (articleIndex != -1) {
         _articles[articleIndex].isBookmarked =
             !_articles[articleIndex].isBookmarked;
@@ -50,9 +52,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = const Color(0xFFF5C518);
-    final Color backgroundColor = const Color(0xFFF9FAFB);
-    final Color textColor = const Color(0xFF333333);
+    final Color primaryColor = const Color(0xFFF59E0B); // Oranye terang
+    final Color backgroundColor = const Color(0xFFFFFFFF); // Putih
+    final Color textColor = const Color(0xFF000000); // Hitam
+    final Color secondaryTextColor = const Color(0xFF6B7280); // Abu-abu gelap
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -91,10 +94,9 @@ class _ProfilePageState extends State<ProfilePage> {
               extra: BookmarkedArticlesPageArgs(
                 allArticles: _articles,
                 onToggleBookmark: _toggleBookmark,
-              )
+              ),
             );
-          } else if (index == 2) {
-          }
+          } else if (index == 2) {}
         },
       ),
     );

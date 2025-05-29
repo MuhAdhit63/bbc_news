@@ -75,9 +75,9 @@ class AppRouter {
             } else {
               return MaterialPage(
                 child: Scaffold(
-                  appBar: AppBar(title: Text("Error"),),
-                  body: Center(child: Text("Argumen....."),),
-                )
+                  appBar: AppBar(title: Text("Error")),
+                  body: Center(child: Text("Argumen.....")),
+                ),
               );
             }
           },
@@ -99,9 +99,9 @@ class AppRouter {
             } else {
               return MaterialPage(
                 child: Scaffold(
-                  appBar: AppBar(title: Text("Error"),),
-                  body: Center(child: Text("Argumen....."),),
-                )
+                  appBar: AppBar(title: Text("Error")),
+                  body: Center(child: Text("Argumen.....")),
+                ),
               );
             }
           },

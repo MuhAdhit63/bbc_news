@@ -20,7 +20,8 @@ class BookmarkedArticlesPageArgs {
 
 class BookmarkedArticlesPage extends StatefulWidget {
   final List<Article> allArticles; // Menerima semua artikel
-  final Function(String articleId) onToggleBookmark; // Fungsi untuk toggle bookmark dari MainPage
+  final Function(String articleId)
+  onToggleBookmark; // Fungsi untuk toggle bookmark dari MainPage
 
   const BookmarkedArticlesPage({
     Key? key,
@@ -37,7 +38,6 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
   late List<Article> _bookmarkedArticles;
   List<Article> _readHistoryArticles = [];
 
-
   @override
   void initState() {
     super.initState();
@@ -48,13 +48,14 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
   void didUpdateWidget(BookmarkedArticlesPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Jika daftar artikel utama berubah (misalnya dari shared_prefs di MainPage), filter ulang
-      _filterBookmarkedArticles();
+    _filterBookmarkedArticles();
   }
 
   void _filterBookmarkedArticles() {
     // Filter artikel yang di-bookmark dari daftar semua artikel
     setState(() {
-      _bookmarkedArticles = widget.allArticles.where((article) => article.isBookmarked).toList();
+      _bookmarkedArticles =
+          widget.allArticles.where((article) => article.isBookmarked).toList();
     });
   }
 
@@ -80,30 +81,35 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
 
   void _toggleBookmark(String articleId) {
     setState(() {
-      final articleIndex = _bookmarkedArticles.indexWhere((article) => article.id == articleId,);
+      final articleIndex = _bookmarkedArticles.indexWhere(
+        (article) => article.id == articleId,
+      );
       if (articleIndex != -1) {
         _bookmarkedArticles[articleIndex].isBookmarked =
             !_bookmarkedArticles[articleIndex].isBookmarked;
       }
-      final historyIndex = _readHistoryArticles.indexWhere((article) => article.id == articleId);
+      final historyIndex = _readHistoryArticles.indexWhere(
+        (article) => article.id == articleId,
+      );
       if (historyIndex != -1) {
-        _readHistoryArticles[historyIndex].isBookmarked = _bookmarkedArticles[articleIndex].isBookmarked;
+        _readHistoryArticles[historyIndex].isBookmarked =
+            _bookmarkedArticles[articleIndex].isBookmarked;
       }
     });
   }
-  
+
   void _navigateToNewsDetail(Article article) {
     _addArticleToHistory(article);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => NewsDetailPage(
-          article: article,
-          onToggleBookmark: _toggleBookmark,
-        ),
+        builder:
+            (context) => NewsDetailPage(
+              article: article,
+              onToggleBookmark: _toggleBookmark,
+            ),
       ),
     );
-    
   }
 
   @override
@@ -111,7 +117,6 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
     // Warna AppBar seperti di gambar referensi (BBCerita.com)
     const Color appBarBackgroundColor = Color(0xFFF9A825); // Oranye-kuning
     const Color appBarTextColor = Colors.black87;
-
 
     return Scaffold(
       appBar: AppBar(
@@ -126,7 +131,9 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
           ),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: appBarTextColor), // Untuk tombol kembali
+        iconTheme: IconThemeData(
+          color: appBarTextColor,
+        ), // Untuk tombol kembali
         actions: [
           // Anda bisa menambahkan ikon search atau filter di sini jika perlu
         ],
@@ -147,31 +154,41 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
           ),
           AppDivider.spaceDivider(thickness: 1, color: Colors.grey[300]!),
           Expanded(
-            child: _bookmarkedArticles.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.bookmark_outline, size: 80, color: Colors.grey[400]),
-                        SizedBox(height: 16),
-                        Text(
-                          'Belum ada artikel yang disimpan.',
-                          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                        ),
-                      ],
+            child:
+                _bookmarkedArticles.isEmpty
+                    ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.bookmark_outline,
+                            size: 80,
+                            color: Colors.grey[400],
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            'Belum ada artikel yang disimpan.',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                    : ListView.builder(
+                      itemCount: _bookmarkedArticles.length,
+                      itemBuilder: (context, index) {
+                        final article = _bookmarkedArticles[index];
+                        return NewsCard(
+                          article: article,
+                          onToggleBookmark:
+                              (id) =>
+                                  _handleToggleBookmarkOnThisPage(article.id),
+                          onCardTap: () => _navigateToNewsDetail(article),
+                        );
+                      },
                     ),
-                  )
-                : ListView.builder(
-                    itemCount: _bookmarkedArticles.length,
-                    itemBuilder: (context, index) {
-                      final article = _bookmarkedArticles[index];
-                      return NewsCard(
-                        article: article,
-                        onToggleBookmark: (id) => _handleToggleBookmarkOnThisPage(article.id),
-                        onCardTap: () => _navigateToNewsDetail(article),
-                      );
-                    },
-                  ),
           ),
         ],
       ),
@@ -180,14 +197,17 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
         onTap: (index) {
           // Logika navigasi untuk bottom nav bar dari halaman ini
           // Misalnya, kembali ke MainPage atau halaman lain
-          if (index == 0) { // Contoh: Tombol Home
-             // Cek apakah MainPage sudah ada di stack, jika ya pop until, jika tidak pushReplacement
+          if (index == 0) {
+            // Contoh: Tombol Home
+            // Cek apakah MainPage sudah ada di stack, jika ya pop until, jika tidak pushReplacement
             context.goNamed(RouteNames.home);
-          } else if (index == 1) { // Contoh: Tombol Kategori
+          } else if (index == 1) {
+            // Contoh: Tombol Kategori
             // Navigasi ke halaman kategori
-             // Sama seperti di atas, Anda mungkin ingin kembali ke MainPage dan pindah tab,
-             // atau push halaman kategori baru jika logikanya berbeda.
-          } else if (index == 2) { // Contoh: Tombol Profil
+            // Sama seperti di atas, Anda mungkin ingin kembali ke MainPage dan pindah tab,
+            // atau push halaman kategori baru jika logikanya berbeda.
+          } else if (index == 2) {
+            // Contoh: Tombol Profil
             context.goNamed(RouteNames.profile);
           }
         },
