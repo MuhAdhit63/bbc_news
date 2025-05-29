@@ -1,4 +1,6 @@
+import 'package:bbc_news/models/article_model.dart';
 import 'package:bbc_news/routes/route_names.dart';
+import 'package:bbc_news/views/bookmark_articles_page.dart';
 import 'package:bbc_news/widgets/bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +14,39 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   int _currentBottomNavIndex = 2;
+
+  late List<Article> _articles;
+
+  @override
+  void initState() {
+    super.initState();
+    _articles =
+        dummyArticles
+            .map(
+              (article) => Article(
+                id: article.id,
+                title: article.title,
+                summary: article.summary,
+                imageUrl: article.imageUrl,
+                author: article.author,
+                category: article.category,
+                publishedDate: article.publishedDate,
+                articleBody: article.articleBody,
+                isBookmarked: article.isBookmarked,
+              ),
+            )
+            .toList();
+  }
+
+  void _toggleBookmark(String articleId) {
+    setState(() {
+      final articleIndex = _articles.indexWhere((article) => article.id == articleId,);
+      if (articleIndex != -1) {
+        _articles[articleIndex].isBookmarked =
+            !_articles[articleIndex].isBookmarked;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +86,13 @@ class _ProfilePageState extends State<ProfilePage> {
           if (index == 0) {
             context.goNamed(RouteNames.home);
           } else if (index == 1) {
-            _navigateToDetail('Semua Kategori');
+            context.goNamed(
+              RouteNames.bookmark,
+              extra: BookmarkedArticlesPageArgs(
+                allArticles: _articles,
+                onToggleBookmark: _toggleBookmark,
+              )
+            );
           } else if (index == 2) {
           }
         },

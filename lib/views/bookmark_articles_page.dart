@@ -137,11 +137,7 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
           // Misalnya, kembali ke MainPage atau halaman lain
           if (index == 0) { // Contoh: Tombol Home
              // Cek apakah MainPage sudah ada di stack, jika ya pop until, jika tidak pushReplacement
-            if (Navigator.canPop(context)) { // Jika bisa di-pop, kemungkinan besar MainPage ada di bawahnya
-                Navigator.popUntil(context, (route) => route.isFirst); // Kembali ke halaman paling awal (biasanya MainPage atau Splash)
-            } else {
-                
-            }
+            context.goNamed(RouteNames.home);
           } else if (index == 1) { // Contoh: Tombol Kategori
             // Navigasi ke halaman kategori
              // Sama seperti di atas, Anda mungkin ingin kembali ke MainPage dan pindah tab,
