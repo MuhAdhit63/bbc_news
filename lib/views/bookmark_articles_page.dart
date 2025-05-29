@@ -35,9 +35,7 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
   void didUpdateWidget(BookmarkedArticlesPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Jika daftar artikel utama berubah (misalnya dari shared_prefs di MainPage), filter ulang
-    if (widget.allArticles != oldWidget.allArticles) {
       _filterBookmarkedArticles();
-    }
   }
 
   void _filterBookmarkedArticles() {
@@ -115,7 +113,7 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
                       final article = _bookmarkedArticles[index];
                       return NewsCard(
                         article: article,
-                        onBookmarkTap: () => _handleToggleBookmarkOnThisPage(article.id),
+                        onToggleBookmark: (id) => _handleToggleBookmarkOnThisPage(article.id),
                       );
                     },
                   ),

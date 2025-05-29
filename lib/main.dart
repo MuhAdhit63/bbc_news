@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:bbc_news/routes/app_route.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/date_symbol_data_file.dart';
+import 'package:intl/intl.dart';
 
 void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await initializeDateFormatting('id_ID', '');
   runApp(const MyApp());
 }
 

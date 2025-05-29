@@ -1,13 +1,14 @@
 // lib/widgets/news_card.dart
+import 'package:bbc_news/views/news_detail_page.dart';
 import 'package:flutter/material.dart';
 import '../models/article_model.dart';
 import '../views/detail_page.dart';
 
 class NewsCard extends StatelessWidget {
   final Article article;
-  final VoidCallback onBookmarkTap;
+  final Function(String articleId) onToggleBookmark;
 
-  const NewsCard({Key? key, required this.article, required this.onBookmarkTap}) : super(key: key);
+  const NewsCard({Key? key, required this.article, required this.onToggleBookmark}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,11 @@ class NewsCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DetailPage(pageTitle: "Detail Berita: ${article.title}")),
+          MaterialPageRoute(
+            builder: (context) => NewsDetailPage(
+              article: article,
+              onToggleBookmark: onToggleBookmark,
+            )),
         );
       },
       child: Card(
@@ -56,7 +61,7 @@ class NewsCard extends StatelessWidget {
                     color: article.isBookmarked ? Theme.of(context).colorScheme.primary : Colors.black,
                     size: 28,
                   ),
-                  onPressed: onBookmarkTap,
+                  onPressed: () => onToggleBookmark(article.id),
                   tooltip: article.isBookmarked ? 'Hapus Bookmark' : 'Tambahkan Bookmark',
                 )
               ),

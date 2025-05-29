@@ -31,6 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 imageUrl: article.imageUrl,
                 author: article.author,
                 category: article.category,
+                publishedDate: article.publishedDate,
+                articleBody: article.articleBody,
                 isBookmarked: article.isBookmarked,
               ),
             )
@@ -46,9 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _toggleBookmark(String articleId) {
     setState(() {
-      final articleIndex = _articles.indexWhere(
-        (article) => article.id == articleId,
-      );
+      final articleIndex = _articles.indexWhere((article) => article.id == articleId,);
       if (articleIndex != -1) {
         _articles[articleIndex].isBookmarked =
             !_articles[articleIndex].isBookmarked;
@@ -109,12 +109,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 shrinkWrap: true,
                 physics:
                     NeverScrollableScrollPhysics(), // Agar bisa di-scroll di dalam SingleChildScrollView
-                itemCount: dummyArticles.length,
+                itemCount: _articles.length,
                 itemBuilder: (context, index) {
                   final article = _articles[index];
                   return NewsCard(
                     article: article,
-                    onBookmarkTap: () => _toggleBookmark(article.id),
+                    onToggleBookmark: _toggleBookmark,
                   );
                 },
               ),
