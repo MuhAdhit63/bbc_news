@@ -1,5 +1,6 @@
 // lib/views/main_page.dart
 import 'package:bbc_news/routes/route_names.dart';
+import 'package:bbc_news/views/bookmark_articles_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/article_model.dart';
@@ -14,11 +15,45 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentBottomNavIndex = 0; // Untuk bottom nav jika ingin stateful
+  int _currentBottomNavIndex = 0;
+  late List<Article> _articles;
+
+  @override
+  void initState() {
+    super.initState();
+    _articles =
+        dummyArticles
+            .map(
+              (article) => Article(
+                id: article.id,
+                title: article.title,
+                summary: article.summary,
+                imageUrl: article.imageUrl,
+                author: article.author,
+                category: article.category,
+                isBookmarked: article.isBookmarked,
+              ),
+            )
+            .toList();
+  }
 
   void _navigateToDetail(String pageName) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => DetailPage(pageTitle: pageName)));
+      context,
+      MaterialPageRoute(builder: (context) => DetailPage(pageTitle: pageName)),
+    );
+  }
+
+  void _toggleBookmark(String articleId) {
+    setState(() {
+      final articleIndex = _articles.indexWhere(
+        (article) => article.id == articleId,
+      );
+      if (articleIndex != -1) {
+        _articles[articleIndex].isBookmarked =
+            !_articles[articleIndex].isBookmarked;
+      }
+    });
   }
 
   @override
@@ -43,19 +78,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // News Articles Section
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       "Latest News",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     TextButton(
                       onPressed: () => _navigateToDetail("Semua Berita"),
                       child: Text(
                         "see more >>",
-                        style: TextStyle(color: Colors.orangeAccent, fontSize: 12),
+                        style: TextStyle(
+                          color: Colors.orangeAccent,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
@@ -63,10 +107,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(), // Agar bisa di-scroll di dalam SingleChildScrollView
+                physics:
+                    NeverScrollableScrollPhysics(), // Agar bisa di-scroll di dalam SingleChildScrollView
                 itemCount: dummyArticles.length,
                 itemBuilder: (context, index) {
-                  return NewsCard(article: dummyArticles[index]);
+                  final article = _articles[index];
+                  return NewsCard(
+                    article: article,
+                    onBookmarkTap: () => _toggleBookmark(article.id),
+                  );
                 },
               ),
               SizedBox(height: 20), // Spacer di bawah
@@ -103,7 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
             image: DecorationImage(
               image: AssetImage('assets/images/article2.png'), // GANTI INI
               fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode( // Efek gelap pada gambar
+              colorFilter: ColorFilter.mode(
+                // Efek gelap pada gambar
                 Colors.orange.withOpacity(0.4),
                 BlendMode.darken,
               ),
@@ -118,34 +168,38 @@ class _HomeScreenState extends State<HomeScreen> {
         // Content on Header
         Positioned.fill(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 10.0,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 10),
-                 // Search Bar
+                // Search Bar
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 15),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
-                     boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 5,
-                          offset: Offset(0,2)
-                        )
-                      ]
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: 'Find news articles...',
                       icon: Icon(Icons.search, color: Colors.grey),
                       border: InputBorder.none,
-                      hintStyle: TextStyle(color: Colors.grey[600])
+                      hintStyle: TextStyle(color: Colors.grey[600]),
                     ),
-                    onSubmitted: (value) => _navigateToDetail("Hasil Pencarian: $value"),
+                    onSubmitted:
+                        (value) => _navigateToDetail("Hasil Pencarian: $value"),
                   ),
                 ),
                 Spacer(), // Mendorong teks ke bawah
@@ -156,8 +210,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 18, // Sesuaikan ukuran
                     fontWeight: FontWeight.w600,
                     shadows: [
-                      Shadow(blurRadius: 5.0, color: Colors.black.withOpacity(0.5), offset: Offset(1.0, 1.0)),
-                    ]
+                      Shadow(
+                        blurRadius: 5.0,
+                        color: Colors.black.withOpacity(0.5),
+                        offset: Offset(1.0, 1.0),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 25), // Jarak dari bawah header
@@ -171,10 +229,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildUserInfoCard(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 20), // Geser ke atas sedikit
+      margin: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 16,
+        bottom: 20,
+      ), // Geser ke atas sedikit
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color.fromARGB(255, 253, 203, 138), width: 1),
+        border: Border.all(
+          color: const Color.fromARGB(255, 253, 203, 138),
+          width: 1,
+        ),
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
@@ -208,16 +274,38 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildIconButton(BuildContext context, IconData icon, String pageName) {
+  Widget _buildIconButton(
+    BuildContext context,
+    IconData icon,
+    String pageName,
+  ) {
     return InkWell(
-      onTap: () => _navigateToDetail(pageName),
+      onTap: () {
+        if (pageName == "Bookmark") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => BookmarkedArticlesPage(
+                    allArticles: _articles,
+                    onToggleBookmark: _toggleBookmark,
+                  ),
+            ),
+          );
+        } else if (pageName == "Riwayat Baca") {
+          _navigateToDetail("Riwayat Baca");
+        }
+      },
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: EdgeInsets.all(8),
-         decoration: BoxDecoration(
-          border: Border.all(color: const Color.fromARGB(255, 253, 190, 108), width: 1),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: const Color.fromARGB(255, 253, 190, 108),
+            width: 1,
+          ),
           color: Colors.grey[200], // Warna latar tombol ikon
-          borderRadius: BorderRadius.circular(25)
+          borderRadius: BorderRadius.circular(25),
         ),
         child: Icon(icon, color: Colors.grey[700], size: 22),
       ),
@@ -234,11 +322,41 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Tombol Kategori
-              CategoryButton(icon: Icons.account_balance_outlined, label: 'Politics', backgroundColor: Color(0xFFFDE7E7), iconColor: Color(0xFFD9534F), navigationPageName: 'Kategori Politik'),
-              CategoryButton(icon: Icons.movie_creation_outlined, label: 'Entertainment', backgroundColor: Color(0xFFE7F5FD), iconColor: Color(0xFF5BC0DE), navigationPageName: 'Kategori Hiburan'),
-              CategoryButton(icon: Icons.sports_basketball_outlined, label: 'Sports', backgroundColor: Color(0xFFE8F5E9), iconColor: Color(0xFF5CB85C), navigationPageName: 'Kategori Olahraga'),
-              CategoryButton(icon: Icons.local_police_outlined, label: 'Criminal', backgroundColor: Color(0xFFECEFF1), iconColor: Color(0xFF37474F), navigationPageName: 'Kategori Kriminal'),
-              CategoryButton(icon: Icons.apps_outlined, label: '', backgroundColor: Colors.grey.shade200, iconColor: Colors.black54, navigationPageName: 'Semua Kategori'),
+              CategoryButton(
+                icon: Icons.account_balance_outlined,
+                label: 'Politics',
+                backgroundColor: Color(0xFFFDE7E7),
+                iconColor: Color(0xFFD9534F),
+                navigationPageName: 'Kategori Politik',
+              ),
+              CategoryButton(
+                icon: Icons.movie_creation_outlined,
+                label: 'Entertainment',
+                backgroundColor: Color(0xFFE7F5FD),
+                iconColor: Color(0xFF5BC0DE),
+                navigationPageName: 'Kategori Hiburan',
+              ),
+              CategoryButton(
+                icon: Icons.sports_basketball_outlined,
+                label: 'Sports',
+                backgroundColor: Color(0xFFE8F5E9),
+                iconColor: Color(0xFF5CB85C),
+                navigationPageName: 'Kategori Olahraga',
+              ),
+              CategoryButton(
+                icon: Icons.local_police_outlined,
+                label: 'Criminal',
+                backgroundColor: Color(0xFFECEFF1),
+                iconColor: Color(0xFF37474F),
+                navigationPageName: 'Kategori Kriminal',
+              ),
+              CategoryButton(
+                icon: Icons.apps_outlined,
+                label: '',
+                backgroundColor: Colors.grey.shade200,
+                iconColor: Colors.black54,
+                navigationPageName: 'Semua Kategori',
+              ),
             ],
           ),
           SizedBox(height: 8),

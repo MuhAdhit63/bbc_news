@@ -5,8 +5,9 @@ import '../views/detail_page.dart';
 
 class NewsCard extends StatelessWidget {
   final Article article;
+  final VoidCallback onBookmarkTap;
 
-  const NewsCard({Key? key, required this.article}) : super(key: key);
+  const NewsCard({Key? key, required this.article, required this.onBookmarkTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +43,22 @@ class NewsCard extends StatelessWidget {
                     child: Icon(Icons.broken_image, color: Colors.grey[600], size: 50),
                   );
                 },
+              ),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Material(
+                color: Colors.transparent,
+                child: IconButton(
+                  icon: Icon(
+                    article.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                    color: article.isBookmarked ? Theme.of(context).colorScheme.primary : Colors.black,
+                    size: 28,
+                  ),
+                  onPressed: onBookmarkTap,
+                  tooltip: article.isBookmarked ? 'Hapus Bookmark' : 'Tambahkan Bookmark',
+                )
               ),
             ),
             Padding(

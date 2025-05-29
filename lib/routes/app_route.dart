@@ -1,3 +1,4 @@
+import 'package:bbc_news/views/bookmark_articles_page.dart';
 import 'package:bbc_news/views/home_screen.dart';
 import 'package:bbc_news/views/login_page.dart';
 import 'package:bbc_news/views/profil_screen.dart';
@@ -50,6 +51,7 @@ class AppRouter {
           name: RouteNames.profile,
           pageBuilder: (context, state) => MaterialPage(child: ProfilePage()),
         ),
+
       ],
     );
   }
