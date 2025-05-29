@@ -122,8 +122,10 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
           style: TextStyle(
             color: appBarTextColor,
             fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.italic,
           ),
         ),
+        centerTitle: true,
         iconTheme: IconThemeData(color: appBarTextColor), // Untuk tombol kembali
         actions: [
           // Anda bisa menambahkan ikon search atau filter di sini jika perlu

@@ -9,13 +9,19 @@ class ReadingHistoryPageArgs {
   final List<Article> readArticles;
   final Function(Article article) onNavigateToDetail;
   final Function(String articleId) onToggleBookmark;
-  ReadingHistoryPageArgs({required this.readArticles, required this.onNavigateToDetail, required this.onToggleBookmark});
+  ReadingHistoryPageArgs({
+    required this.readArticles,
+    required this.onNavigateToDetail,
+    required this.onToggleBookmark,
+  });
 }
 
 class ReadingHistoryPage extends StatelessWidget {
   final List<Article> readArticles;
-  final Function(Article article) onNavigateToDetail; // Untuk membuka detail dari riwayat
-  final Function(String articleId) onToggleBookmark; // Untuk sinkronisasi bookmark jika ditampilkan di HistoryCard
+  final Function(Article article)
+  onNavigateToDetail; // Untuk membuka detail dari riwayat
+  final Function(String articleId)
+  onToggleBookmark; // Untuk sinkronisasi bookmark jika ditampilkan di HistoryCard
 
   const ReadingHistoryPage({
     Key? key,
@@ -39,7 +45,12 @@ class ReadingHistoryPage extends StatelessWidget {
         ),
         title: Text(
           'BBCerita.com',
-          style: TextStyle(color: appBarTextColor, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: appBarTextColor,
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.italic,
+            fontFamily: 'Roboto',
+          ),
         ),
         centerTitle: true,
       ),
@@ -58,32 +69,43 @@ class ReadingHistoryPage extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: readArticles.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.history_edu_outlined, size: 80, color: Colors.grey[400]),
-                        SizedBox(height: 16),
-                        Text(
-                          'Riwayat baca masih kosong.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                        ),
-                      ],
+            child:
+                readArticles.isEmpty
+                    ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.history_edu_outlined,
+                            size: 80,
+                            color: Colors.grey[400],
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            'Riwayat baca masih kosong.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                    : ListView.builder(
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                      itemCount: readArticles.length,
+                      itemBuilder: (context, index) {
+                        final article = readArticles[index];
+                        return HistoryArticleCard(
+                          article: article,
+                          onTap:
+                              () => onNavigateToDetail(
+                                article,
+                              ), // Buka detail saat item riwayat di-tap
+                        );
+                      },
                     ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    itemCount: readArticles.length,
-                    itemBuilder: (context, index) {
-                      final article = readArticles[index];
-                      return HistoryArticleCard(
-                        article: article,
-                        onTap: () => onNavigateToDetail(article), // Buka detail saat item riwayat di-tap
-                      );
-                    },
-                  ),
           ),
         ],
       ),

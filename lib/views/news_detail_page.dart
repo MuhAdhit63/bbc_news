@@ -65,7 +65,8 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
           'BBCerita.com',
           style: TextStyle(
             color: appBarTextColor,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w900,
+            fontStyle: FontStyle.italic,
           ),
         ),
         centerTitle: true, // Atau false jika ingin rata kiri
