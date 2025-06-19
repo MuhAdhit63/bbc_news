@@ -1,6 +1,8 @@
 // lib/views/main_page.dart
 import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/services/auth_service.dart';
+import 'package:bbc_news/services/bookmark_service.dart';
+import 'package:bbc_news/services/news_service.dart';
 import 'package:bbc_news/views/bookmark_articles_page.dart';
 import 'package:bbc_news/views/news_detail_page.dart';
 import 'package:bbc_news/views/profil_screen.dart';
@@ -27,22 +29,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _articles =
-        dummyArticles
-            .map(
-              (article) => Article(
-                id: article.id,
-                title: article.title,
-                summary: article.summary,
-                imageUrl: article.imageUrl,
-                author: article.author,
-                category: article.category,
-                publishedDate: article.publishedDate,
-                articleBody: article.articleBody,
-                isBookmarked: article.isBookmarked,
-              ),
-            )
-            .toList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final token = Provider.of<AuthService>(context, listen: false).token;
+      Provider.of<NewsService>(context, listen: false).fetchAllNews(token);
+      Provider.of<BookmarkService>(context, listen: false).loadBookmarks();
+    });
   }
 
   void _navigateToDetail(String pageName) {
@@ -103,119 +94,281 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: Colors.grey[200], // Latar belakang utama halaman
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header Section (Search Bar and Image)
-              _buildHeader(context, screenWidth),
+      body: Consumer<NewsService>(
+        builder: (context, newsService, child) {
+          if (newsService.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (newsService.allNews.isEmpty) {
+            return const Center(
+              child: Text('Tidak ada berita yang ditemukan.'),
+            );
+          }
 
-              // User Info Card
-              Container(
-                margin: EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 16,
-                  bottom: 20,
-                ), // Geser ke atas sedikit
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: const Color.fromARGB(255, 253, 203, 138),
-                    width: 1,
-                  ),
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 2,
-                      blurRadius: 8,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
+          final newsList = newsService.allNews;
+          return RefreshIndicator(
+            onRefresh: () async {
+              final token =
+                  Provider.of<AuthService>(context, listen: false).token;
+              await newsService.fetchAllNews(token);
+            },
+            child: SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 22,
-                      backgroundImage: AssetImage(
-                        'assets/images/logo.png',
-                      ), // GANTI INI
-                      backgroundColor: Colors.grey[200],
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        user!.fullName,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                    // Header Section (Search Bar and Image)
+                    _buildHeader(context, screenWidth),
+
+                    // User Info Card
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: 20,
+                        right: 20,
+                        top: 16,
+                        bottom: 20,
+                      ), // Geser ke atas sedikit
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color.fromARGB(255, 253, 203, 138),
+                          width: 1,
                         ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 22,
+                            backgroundImage: AssetImage(
+                              'assets/images/logo.png',
+                            ), // GANTI INI
+                            backgroundColor: Colors.grey[200],
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              user!.fullName,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                          _buildIconButton(
+                            context,
+                            Icons.history,
+                            "Riwayat Baca",
+                          ),
+                          SizedBox(width: 8),
+                          _buildIconButton(
+                            context,
+                            Icons.bookmark_border,
+                            "Bookmark",
+                          ),
+                        ],
                       ),
                     ),
-                    _buildIconButton(context, Icons.history, "Riwayat Baca"),
-                    SizedBox(width: 8),
-                    _buildIconButton(
-                      context,
-                      Icons.bookmark_border,
-                      "Bookmark",
+
+                    // Categories Section
+                    _buildCategoriesSection(context),
+
+                    // News Articles Section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Latest News",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => _navigateToDetail("Semua Berita"),
+                            child: Text(
+                              "see more >>",
+                              style: TextStyle(
+                                color: Colors.orangeAccent,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics:
+                          NeverScrollableScrollPhysics(), // Agar bisa di-scroll di dalam SingleChildScrollView
+                      itemCount: newsList.length,
+                      itemBuilder: (context, index) {
+                        final article = newsList[index];
+                        if (index < 3) {
+                          return GestureDetector(
+                            onTap: () {
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder:
+                              //         (context) => NewsDetailPage(
+                              //           article: article,
+                              //           onToggleBookmark: onToggleBookmark,
+                              //         ),
+                              //   ),
+                              // );
+                            },
+                            child: Card(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(12),
+                                      topRight: Radius.circular(12),
+                                    ),
+                                    child: Image.network(
+                                      '$article.featuredImageUrl!',
+                                      height: 180,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Container(
+                                          height: 180,
+                                          width: double.infinity,
+                                          color: Colors.grey[300],
+                                          child: Image.asset(
+                                            'assets/images/article3.png',
+                                            height: 180,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  Consumer<BookmarkService>(
+                                    builder:
+                                        (
+                                          ctx,
+                                          bookmarkService,
+                                          child,
+                                        ) => Positioned(
+                                          top: 8,
+                                          right: 8,
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: IconButton(
+                                              icon: Icon(
+                                                bookmarkService.isBookmarked(
+                                                      article.id!,
+                                                    )
+                                                    ? Icons.bookmark
+                                                    : Icons.bookmark_border,
+                                                color:
+                                                    bookmarkService
+                                                            .isBookmarked(
+                                                              article.id!,
+                                                            )
+                                                        ? Theme.of(
+                                                          context,
+                                                        ).primaryColor
+                                                        : Colors.grey,
+                                                size: 28,
+                                              ),
+                                              onPressed: () {
+                                                bookmarkService.toggleBookmark(
+                                                  article.id!,
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          article.title!,
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 6),
+                                        Text(
+                                          'By: ${article.author!}',
+                                          style: TextStyle(
+                                            color: Colors.orange,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 6),
+                                        Text(
+                                          article.content!,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey[700],
+                                          ),
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 8),
+                                        // Text(
+                                        //   'By ${article.author} in ${article.category}',
+                                        //   style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey[600]),
+                                        // ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    SizedBox(height: 20), // Spacer di bawah
                   ],
                 ),
               ),
-
-              // Categories Section
-              _buildCategoriesSection(context),
-
-              // News Articles Section
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Latest News",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => _navigateToDetail("Semua Berita"),
-                      child: Text(
-                        "see more >>",
-                        style: TextStyle(
-                          color: Colors.orangeAccent,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics:
-                    NeverScrollableScrollPhysics(), // Agar bisa di-scroll di dalam SingleChildScrollView
-                itemCount: _articles.length,
-                itemBuilder: (context, index) {
-                  final article = _articles[index];
-                  return NewsCard(
-                    article: article,
-                    onToggleBookmark: _toggleBookmark,
-                    onCardTap: () => _navigateToNewsDetail(article),
-                  );
-                },
-              ),
-              SizedBox(height: 20), // Spacer di bawah
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentBottomNavIndex,
