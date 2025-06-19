@@ -2,6 +2,7 @@
 import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/views/bookmark_articles_page.dart';
 import 'package:bbc_news/views/news_detail_page.dart';
+import 'package:bbc_news/views/profil_screen.dart';
 import 'package:bbc_news/views/reading_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -51,14 +52,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _toggleBookmark(String articleId) {
     setState(() {
-      final articleIndex = _articles.indexWhere((article) => article.id == articleId,);
+      final articleIndex = _articles.indexWhere(
+        (article) => article.id == articleId,
+      );
       if (articleIndex != -1) {
         _articles[articleIndex].isBookmarked =
             !_articles[articleIndex].isBookmarked;
       }
-      final historyIndex = _readHistoryArticles.indexWhere((article) => article.id == articleId);
+      final historyIndex = _readHistoryArticles.indexWhere(
+        (article) => article.id == articleId,
+      );
       if (historyIndex != -1) {
-        _readHistoryArticles[historyIndex].isBookmarked = _articles[articleIndex].isBookmarked;
+        _readHistoryArticles[historyIndex].isBookmarked =
+            _articles[articleIndex].isBookmarked;
       }
     });
   }
@@ -79,13 +85,13 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => NewsDetailPage(
-          article: article,
-          onToggleBookmark: _toggleBookmark,
-        ),
+        builder:
+            (context) => NewsDetailPage(
+              article: article,
+              onToggleBookmark: _toggleBookmark,
+            ),
       ),
     );
-    
   }
 
   @override
@@ -170,10 +176,13 @@ class _HomeScreenState extends State<HomeScreen> {
               extra: BookmarkedArticlesPageArgs(
                 allArticles: _articles,
                 onToggleBookmark: _toggleBookmark,
-              )
+              ),
             );
           } else if (index == 2) {
-            context.goNamed(RouteNames.profile);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfilePage()),
+            );
           }
         },
       ),

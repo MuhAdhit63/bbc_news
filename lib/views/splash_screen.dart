@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/utils/helper.dart';
+import 'package:bbc_news/views/auth_check_screen.dart';
 import 'package:bbc_news/views/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -29,7 +30,10 @@ class _SplashScreenState extends State<SplashScreen>
 
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        context.goNamed(RouteNames.login);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AuthCheckScreen()),
+        );
       }
     });
   }
@@ -47,10 +51,7 @@ class _SplashScreenState extends State<SplashScreen>
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            'assets/images/bg.jpg',
-            fit: BoxFit.cover,
-          ),
+          Image.asset('assets/images/bg.jpg', fit: BoxFit.cover),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -1,12 +1,67 @@
 // lib/views/login_page.dart
 import 'package:bbc_news/routes/route_names.dart';
+import 'package:bbc_news/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'home_screen.dart'; // Asumsi MainPage ada di sini
 import 'register_page.dart'; // Untuk navigasi ke halaman register
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController(text: 'news@itg.ac.id');
+  final _passwordController = TextEditingController(text: 'ITG#news');
+  bool _isLoading = false;
+
+  Future<void> _login() async {
+
+    setState(() {
+      _isLoading = true;
+    });
+
+
+    try {
+      await Provider.of<AuthService>(
+        context,
+        listen: false,
+      ).login(_emailController.text, _passwordController.text);
+    } catch (error, stackTrace) {
+
+      showDialog(
+        context: context,
+        builder:
+            (ctx) => AlertDialog(
+              title: Text('Login Gagal'),
+              content: Text(error.toString()),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () => Navigator.of(ctx).pop(),
+                ),
+              ],
+            ),
+      );
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +122,7 @@ class LoginPage extends StatelessWidget {
 
                       // Email Field
                       TextField(
+                        controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: 'youremail@example.com',
@@ -83,6 +139,7 @@ class LoginPage extends StatelessWidget {
 
                       // Password Field
                       TextField(
+                        controller: _passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
                           hintText: 'password',
@@ -109,10 +166,7 @@ class LoginPage extends StatelessWidget {
                           ),
                           foregroundColor: Colors.black87,
                         ),
-                        onPressed: () {
-                          // TODO: Tambahkan logika autentikasi di sini
-                          context.goNamed(RouteNames.home);
-                        },
+                        onPressed: _login,
                         child: Text('Login'),
                       ),
                     ],

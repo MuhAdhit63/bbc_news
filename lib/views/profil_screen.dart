@@ -1,9 +1,12 @@
 import 'package:bbc_news/models/article_model.dart';
 import 'package:bbc_news/routes/route_names.dart';
+import 'package:bbc_news/services/auth_service.dart';
 import 'package:bbc_news/views/bookmark_articles_page.dart';
+import 'package:bbc_news/views/splash_screen.dart';
 import 'package:bbc_news/widgets/bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -36,6 +39,16 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             )
             .toList();
+  }
+
+  void _handleLogOut() async {
+    await Provider.of<AuthService>(context, listen: false).logout();
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SplashScreen()),
+      );
+    }
   }
 
   void _toggleBookmark(String articleId) {
@@ -282,16 +295,12 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Pengaturan Akun Diklik')),
-              );
-            },
-            icon: const Icon(Icons.settings_outlined),
-            label: const Text('Pengaturan Akun'),
+            onPressed: _handleLogOut,
+            icon: const Icon(Icons.logout_sharp),
+            label: const Text('Logout'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.grey[800],
-              side: BorderSide(color: Colors.grey[400]!),
+              foregroundColor: Colors.red,
+              side: BorderSide(color: Colors.red!),
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
