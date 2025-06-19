@@ -74,19 +74,16 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _navigateToNewsDetail(Article article) {
-    _addArticleToHistory(article);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            (context) => NewsDetailPage(
-              article: article,
-              onToggleBookmark: _toggleBookmark,
-            ),
-      ),
-    );
-  }
+  // void _navigateToNewsDetail(Article article) {
+  //   _addArticleToHistory(article);
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder:
+  //           (context) => NewsDetailPage(),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -222,16 +219,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (index < 3) {
                           return GestureDetector(
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder:
-                              //         (context) => NewsDetailPage(
-                              //           article: article,
-                              //           onToggleBookmark: onToggleBookmark,
-                              //         ),
-                              //   ),
-                              // );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NewsDetailPage(article: article,),
+                                ),
+                              );
                             },
                             child: Card(
                               margin: EdgeInsets.symmetric(
@@ -490,14 +483,14 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () {
         if (pageName == "Bookmark") {
           Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => BookmarkedArticlesPage()),
-            );
+            context,
+            MaterialPageRoute(builder: (context) => BookmarkedArticlesPage()),
+          );
         } else if (pageName == "Berita") {
           Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MyNewsPage()),
-            );
+            context,
+            MaterialPageRoute(builder: (context) => MyNewsPage()),
+          );
         }
       },
       borderRadius: BorderRadius.circular(20),

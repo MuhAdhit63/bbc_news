@@ -1,48 +1,30 @@
 // lib/views/news_detail_page.dart
+import 'package:bbc_news/models/news_article.dart';
 import 'package:flutter/material.dart';
 import '../models/article_model.dart';
-// import 'package:intl/intl.dart';
 
-class NewsDetailPage extends StatefulWidget {
-  final Article article;
-  final Function(String articleId) onToggleBookmark; // Fungsi dari MainPage
+class NewsDetailPage extends StatelessWidget {
+  final NewsArticle article;
 
-  const NewsDetailPage({
-    Key? key,
-    required this.article,
-    required this.onToggleBookmark,
-  }) : super(key: key);
-
-  @override
-  _NewsDetailPageState createState() => _NewsDetailPageState();
-}
-
-class _NewsDetailPageState extends State<NewsDetailPage> {
-  late bool _isBookmarkedLocal;
-
-  @override
-  void initState() {
-    super.initState();
-    // Ambil status bookmark awal dari artikel yang diterima
-    _isBookmarkedLocal = widget.article.isBookmarked;
-  }
-
-  void _handleToggleBookmark() {
-    // Panggil fungsi toggle utama yang ada di MainPage
-    widget.onToggleBookmark(widget.article.id);
-    // Perbarui state lokal untuk ikon di halaman ini
-    setState(() {
-      _isBookmarkedLocal = !_isBookmarkedLocal;
-    });
-  }
+  const NewsDetailPage({super.key, required this.article});
 
   String _formatDateManually(DateTime date) {
     const List<String> monthsNames = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
     ];
     if (date.month < 1 || date.month > 12) {
-      return "${date.day} BulanTidakValdi ${date.year}";
+      return "${date.day} BulanTidakValid ${date.year}";
     }
     String monthName = monthsNames[date.month - 1];
     return "${date.day} $monthName ${date.year}";
@@ -69,7 +51,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
             fontStyle: FontStyle.italic,
           ),
         ),
-        centerTitle: true, // Atau false jika ingin rata kiri
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -79,9 +61,9 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
             children: [
               // Judul Artikel
               Text(
-                widget.article.title,
+                article.title,
                 style: TextStyle(
-                  fontSize: 22, 
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
@@ -92,16 +74,21 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.asset(
-                  widget.article.imageUrl,
+                  '$article.featuredImageUrl!',
                   width: double.infinity,
-                  height: 220, // Sesuaikan tinggi gambar
+                  height: 220,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       height: 220,
                       width: double.infinity,
                       color: Colors.grey[300],
-                      child: Icon(Icons.broken_image, color: Colors.grey[600], size: 50),
+                      child: Image.asset(
+                        'assets/images/article3.png',
+                        height: 180,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
                     );
                   },
                 ),
@@ -115,45 +102,43 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                 children: [
                   Expanded(
                     child: Text(
-                      "Author: ${widget.article.author} - ${_formatDateManually(widget.article.publishedDate)} - ${widget.article.category}",
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[700],
-                      ),
+                      "Author: ${article.author!} - 19 June 2025 - ${article.category}",
+                      style: TextStyle(fontSize: 13, color: Colors.grey[700]),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(
-                      _isBookmarkedLocal ? Icons.bookmark : Icons.bookmark_border,
-                      color: _isBookmarkedLocal ? Theme.of(context).colorScheme.primary : Colors.grey[700],
-                      size: 26,
-                    ),
-                    onPressed: _handleToggleBookmark,
-                    tooltip: _isBookmarkedLocal ? 'Hapus Bookmark' : 'Tambah Bookmark',
-                  ),
+                  // IconButton(
+                  //   icon: Icon(
+                  //     article.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                  //     color: article.isBookmarked
+                  //         ? Theme.of(context).colorScheme.primary
+                  //         : Colors.grey[700],
+                  //     size: 26,
+                  //   ),
+                  //   onPressed: () => onToggleBookmark(article.id),
+                  //   tooltip: article.isBookmarked ? 'Hapus Bookmark' : 'Tambah Bookmark',
+                  // ),
                 ],
               ),
               SizedBox(height: 16),
-              Divider(), // Pemisah
+              Divider(),
               SizedBox(height: 16),
 
               // Isi Artikel
               Text(
-                widget.article.articleBody,
+                article.content!,
                 style: TextStyle(
                   fontSize: 16,
-                  height: 1.6, // Jarak antar baris
+                  height: 1.6,
                   color: Colors.black.withOpacity(0.8),
                 ),
-                textAlign: TextAlign.justify, // Rata kiri-kanan
+                textAlign: TextAlign.justify,
               ),
               SizedBox(height: 20),
             ],
           ),
         ),
       ),
-      // bottomNavigationBar: CustomBottomNavigationBar(...),
     );
   }
 }
