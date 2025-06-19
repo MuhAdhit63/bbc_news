@@ -2,6 +2,7 @@ import 'package:bbc_news/models/article_model.dart';
 import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/services/auth_service.dart';
 import 'package:bbc_news/views/bookmark_articles_page.dart';
+import 'package:bbc_news/views/home_screen.dart';
 import 'package:bbc_news/views/splash_screen.dart';
 import 'package:bbc_news/widgets/bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<AuthService>(context, listen: false).user;
     final Color primaryColor = const Color(0xFFF59E0B); // Oranye terang
     final Color backgroundColor = const Color(0xFFFFFFFF); // Putih
     final Color textColor = const Color(0xFF000000); // Hitam
@@ -81,7 +83,80 @@ class _ProfilePageState extends State<ProfilePage> {
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
-          _buildProfileHeader(primaryColor),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [primaryColor.withOpacity(0.3), Colors.white],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            primaryColor.withOpacity(0.2),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                    const CircleAvatar(
+                      radius: 56,
+                      backgroundImage: AssetImage('assets/images/logo.png'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      user!.fullName,
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: primaryColor,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Icon(
+                      Icons.verified,
+                      color: Colors.blueAccent,
+                      size: 20,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${user!.email} | Pengguna Aktif',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                    SizedBox(width: 4),
+                    Text(
+                      'Bergabung sejak 2021',
+                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
           const Divider(thickness: 1),
           _buildStats(),
           const Divider(thickness: 1),
@@ -100,7 +175,10 @@ class _ProfilePageState extends State<ProfilePage> {
             _currentBottomNavIndex = index;
           });
           if (index == 0) {
-            context.goNamed(RouteNames.home);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
           } else if (index == 1) {
             context.goNamed(
               RouteNames.bookmark,
@@ -111,76 +189,6 @@ class _ProfilePageState extends State<ProfilePage> {
             );
           } else if (index == 2) {}
         },
-      ),
-    );
-  }
-
-  Widget _buildProfileHeader(Color primaryColor) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [primaryColor.withOpacity(0.3), Colors.white],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-      child: Column(
-        children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [primaryColor.withOpacity(0.2), Colors.transparent],
-                  ),
-                ),
-              ),
-              const CircleAvatar(
-                radius: 56,
-                backgroundImage: AssetImage('assets/images/logo.png'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'cepi bin oshe',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: primaryColor,
-                ),
-              ),
-              const SizedBox(width: 6),
-              const Icon(Icons.verified, color: Colors.blueAccent, size: 20),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'cepi@gmail.com | Pembaca Aktif',
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(Icons.calendar_today, size: 14, color: Colors.grey),
-              SizedBox(width: 4),
-              Text(
-                'Bergabung sejak 2021',
-                style: TextStyle(fontSize: 13, color: Colors.grey),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-        ],
       ),
     );
   }

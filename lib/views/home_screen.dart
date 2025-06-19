@@ -1,11 +1,13 @@
 // lib/views/main_page.dart
 import 'package:bbc_news/routes/route_names.dart';
+import 'package:bbc_news/services/auth_service.dart';
 import 'package:bbc_news/views/bookmark_articles_page.dart';
 import 'package:bbc_news/views/news_detail_page.dart';
 import 'package:bbc_news/views/profil_screen.dart';
 import 'package:bbc_news/views/reading_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../models/article_model.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/category_button.dart';
@@ -96,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<AuthService>(context, listen: false).user;
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -109,7 +112,59 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildHeader(context, screenWidth),
 
               // User Info Card
-              _buildUserInfoCard(context),
+              Container(
+                margin: EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 16,
+                  bottom: 20,
+                ), // Geser ke atas sedikit
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: const Color.fromARGB(255, 253, 203, 138),
+                    width: 1,
+                  ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 22,
+                      backgroundImage: AssetImage(
+                        'assets/images/logo.png',
+                      ), // GANTI INI
+                      backgroundColor: Colors.grey[200],
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        user!.fullName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    _buildIconButton(context, Icons.history, "Riwayat Baca"),
+                    SizedBox(width: 8),
+                    _buildIconButton(
+                      context,
+                      Icons.bookmark_border,
+                      "Bookmark",
+                    ),
+                  ],
+                ),
+              ),
 
               // Categories Section
               _buildCategoriesSection(context),
@@ -272,53 +327,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildUserInfoCard(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 16,
-        bottom: 20,
-      ), // Geser ke atas sedikit
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: const Color.fromARGB(255, 253, 203, 138),
-          width: 1,
-        ),
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundImage: AssetImage('assets/images/logo.png'), // GANTI INI
-            backgroundColor: Colors.grey[200],
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              "Cepi Mulyadi",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-            ),
-          ),
-          _buildIconButton(context, Icons.history, "Riwayat Baca"),
-          SizedBox(width: 8),
-          _buildIconButton(context, Icons.bookmark_border, "Bookmark"),
-        ],
-      ),
     );
   }
 
