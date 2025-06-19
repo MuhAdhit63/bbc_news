@@ -3,6 +3,7 @@ import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/services/auth_service.dart';
 import 'package:bbc_news/views/bookmark_articles_page.dart';
 import 'package:bbc_news/views/home_screen.dart';
+import 'package:bbc_news/views/my_news_page.dart';
 import 'package:bbc_news/views/splash_screen.dart';
 import 'package:bbc_news/widgets/bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +76,16 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: const Text('Profil Pengguna'),
+        title: Text(
+          'User Profile',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.italic,
+            fontFamily: 'Roboto',
+          ),
+        ),
+        centerTitle: true,
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         elevation: 2,
@@ -138,7 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${user!.email} | Pengguna Aktif',
+                  '${user!.email}',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 10),
@@ -180,12 +190,9 @@ class _ProfilePageState extends State<ProfilePage> {
               MaterialPageRoute(builder: (context) => HomeScreen()),
             );
           } else if (index == 1) {
-            context.goNamed(
-              RouteNames.bookmark,
-              extra: BookmarkedArticlesPageArgs(
-                allArticles: _articles,
-                onToggleBookmark: _toggleBookmark,
-              ),
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BookmarkedArticlesPage()),
             );
           } else if (index == 2) {}
         },
@@ -201,15 +208,15 @@ class _ProfilePageState extends State<ProfilePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Aktivitas Anda',
+            'Your Activity',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: const [
-              _StatItem(title: 'Artikel Dibaca', value: '122'),
-              _StatItem(title: 'Topik Diikuti', value: '9'),
+              _StatItem(title: 'Read Articles', value: '122'),
+              _StatItem(title: 'Followed Topics', value: '9'),
               _StatItem(title: 'Bookmark', value: '15'),
             ],
           ),
@@ -226,7 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
           Text(
-            'Topik Favorit',
+            'Favorite Topics',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 12),
@@ -254,7 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Tentang Saya',
+            'About Me',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -285,12 +292,13 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           ElevatedButton.icon(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Edit Profil Diklik')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyNewsPage()),
               );
             },
-            icon: const Icon(Icons.edit_outlined),
-            label: const Text('Edit Profil'),
+            icon: const Icon(Icons.newspaper_outlined),
+            label: const Text('My News'),
             style: ElevatedButton.styleFrom(
               backgroundColor: primaryColor,
               foregroundColor: Colors.white,

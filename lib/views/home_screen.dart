@@ -4,6 +4,7 @@ import 'package:bbc_news/services/auth_service.dart';
 import 'package:bbc_news/services/bookmark_service.dart';
 import 'package:bbc_news/services/news_service.dart';
 import 'package:bbc_news/views/bookmark_articles_page.dart';
+import 'package:bbc_news/views/my_news_page.dart';
 import 'package:bbc_news/views/news_detail_page.dart';
 import 'package:bbc_news/views/profil_screen.dart';
 import 'package:bbc_news/views/reading_history_page.dart';
@@ -166,8 +167,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           _buildIconButton(
                             context,
-                            Icons.history,
-                            "Riwayat Baca",
+                            Icons.newspaper_outlined,
+                            "Berita",
                           ),
                           SizedBox(width: 8),
                           _buildIconButton(
@@ -379,12 +380,9 @@ class _HomeScreenState extends State<HomeScreen> {
           if (index == 0) {
             // Anda sudah di Beranda atau bisa refresh/kembali ke atas
           } else if (index == 1) {
-            context.goNamed(
-              RouteNames.bookmark,
-              extra: BookmarkedArticlesPageArgs(
-                allArticles: _articles,
-                onToggleBookmark: _toggleBookmark,
-              ),
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BookmarkedArticlesPage()),
             );
           } else if (index == 2) {
             Navigator.push(
@@ -492,27 +490,14 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () {
         if (pageName == "Bookmark") {
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) => BookmarkedArticlesPage(
-                    allArticles: _articles,
-                    onToggleBookmark: _toggleBookmark,
-                  ),
-            ),
-          );
-        } else if (pageName == "Riwayat Baca") {
+              context,
+              MaterialPageRoute(builder: (context) => BookmarkedArticlesPage()),
+            );
+        } else if (pageName == "Berita") {
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) => ReadingHistoryPage(
-                    readArticles: _readHistoryArticles,
-                    onNavigateToDetail: _navigateToNewsDetail,
-                    onToggleBookmark: _toggleBookmark,
-                  ),
-            ),
-          );
+              context,
+              MaterialPageRoute(builder: (context) => MyNewsPage()),
+            );
         }
       },
       borderRadius: BorderRadius.circular(20),

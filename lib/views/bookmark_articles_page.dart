@@ -1,119 +1,23 @@
 // lib/views/bookmarked_articles_page.dart
 import 'package:bbc_news/routes/route_names.dart';
-import 'package:bbc_news/utils/helper.dart';
+import 'package:bbc_news/services/bookmark_service.dart';
+import 'package:bbc_news/services/news_service.dart';
+import 'package:bbc_news/views/home_screen.dart';
 import 'package:bbc_news/views/news_detail_page.dart';
+import 'package:bbc_news/views/profil_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../models/article_model.dart';
 import '../widgets/news_card.dart';
-import '../widgets/bottom_navigation_bar.dart'; // Asumsi path ini benar
+import '../widgets/bottom_navigation_bar.dart';
 
-class BookmarkedArticlesPageArgs {
-  final List<Article> allArticles;
-  final Function(String articleId) onToggleBookmark;
-
-  BookmarkedArticlesPageArgs({
-    required this.allArticles,
-    required this.onToggleBookmark,
-  });
-}
-
-class BookmarkedArticlesPage extends StatefulWidget {
-  final List<Article> allArticles; // Menerima semua artikel
-  final Function(String articleId)
-  onToggleBookmark; // Fungsi untuk toggle bookmark dari MainPage
-
-  const BookmarkedArticlesPage({
-    Key? key,
-    required this.allArticles,
-    required this.onToggleBookmark,
-  }) : super(key: key);
-
-  @override
-  _BookmarkedArticlesPageState createState() => _BookmarkedArticlesPageState();
-}
-
-class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
-  int _currentBottomNavIndex = 1;
-  late List<Article> _bookmarkedArticles;
-  List<Article> _readHistoryArticles = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _filterBookmarkedArticles();
-  }
-
-  @override
-  void didUpdateWidget(BookmarkedArticlesPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Jika daftar artikel utama berubah (misalnya dari shared_prefs di MainPage), filter ulang
-    _filterBookmarkedArticles();
-  }
-
-  void _filterBookmarkedArticles() {
-    // Filter artikel yang di-bookmark dari daftar semua artikel
-    setState(() {
-      _bookmarkedArticles =
-          widget.allArticles.where((article) => article.isBookmarked).toList();
-    });
-  }
-
-  void _handleToggleBookmarkOnThisPage(String articleId) {
-    // Panggil fungsi toggle utama dari MainPage
-    widget.onToggleBookmark(articleId);
-    // Setelah status di MainPage (source of truth) diubah, filter ulang daftar di halaman ini
-    // Perubahan pada widget.allArticles (karena isBookmarked diubah di MainPage) akan memicu didUpdateWidget
-    // atau kita bisa langsung filter ulang di sini untuk efek instan jika MainPage tidak mengirim ulang widget tree
-    _filterBookmarkedArticles();
-  }
-
-  void _addArticleToHistory(Article article) {
-    setState(() {
-      _readHistoryArticles.removeWhere((a) => a.id == article.id);
-      _readHistoryArticles.insert(0, article);
-
-      if (_readHistoryArticles.length > 10) {
-        _readHistoryArticles = _readHistoryArticles.sublist(0, 10);
-      }
-    });
-  }
-
-  void _toggleBookmark(String articleId) {
-    setState(() {
-      final articleIndex = _bookmarkedArticles.indexWhere(
-        (article) => article.id == articleId,
-      );
-      if (articleIndex != -1) {
-        _bookmarkedArticles[articleIndex].isBookmarked =
-            !_bookmarkedArticles[articleIndex].isBookmarked;
-      }
-      final historyIndex = _readHistoryArticles.indexWhere(
-        (article) => article.id == articleId,
-      );
-      if (historyIndex != -1) {
-        _readHistoryArticles[historyIndex].isBookmarked =
-            _bookmarkedArticles[articleIndex].isBookmarked;
-      }
-    });
-  }
-
-  void _navigateToNewsDetail(Article article) {
-    _addArticleToHistory(article);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            (context) => NewsDetailPage(
-              article: article,
-              onToggleBookmark: _toggleBookmark,
-            ),
-      ),
-    );
-  }
+class BookmarkedArticlesPage extends StatelessWidget {
+  const BookmarkedArticlesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // final bookmarkedArticles = _getBookmarkedArticles();
+
     // Warna AppBar seperti di gambar referensi (BBCerita.com)
     const Color appBarBackgroundColor = Color(0xFFF9A825); // Oranye-kuning
     const Color appBarTextColor = Colors.black87;
@@ -134,81 +38,225 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
         iconTheme: IconThemeData(
           color: appBarTextColor,
         ), // Untuk tombol kembali
-        actions: [
-          // Anda bisa menambahkan ikon search atau filter di sini jika perlu
-        ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "All Saved", // Sesuai gambar referensi
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.normal,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-          AppDivider.spaceDivider(thickness: 1, color: Colors.grey[300]!),
-          Expanded(
-            child:
-                _bookmarkedArticles.isEmpty
-                    ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.bookmark_outline,
-                            size: 80,
-                            color: Colors.grey[400],
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            'Belum ada artikel yang disimpan.',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
+      body: Consumer<BookmarkService>(
+        builder: (context, bookmarkService, child) {
+          return Consumer<NewsService>(
+            builder: (context, newsService, child) {
+              final bookmarkedArticles =
+                  newsService.allNews
+                      .where(
+                        (article) => bookmarkService.isBookmarked(article.id!),
+                      )
+                      .toList();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "All Saved", // Sesuai gambar referensi
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black87,
                       ),
-                    )
-                    : ListView.builder(
-                      itemCount: _bookmarkedArticles.length,
-                      itemBuilder: (context, index) {
-                        final article = _bookmarkedArticles[index];
-                        return NewsCard(
-                          article: article,
-                          onToggleBookmark:
-                              (id) =>
-                                  _handleToggleBookmarkOnThisPage(article.id),
-                          onCardTap: () => _navigateToNewsDetail(article),
-                        );
-                      },
                     ),
-          ),
-        ],
+                  ),
+                  Divider(thickness: 1, color: Colors.grey[300]),
+                  Expanded(
+                    child:
+                        bookmarkedArticles.isEmpty
+                            ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.bookmark_outline,
+                                    size: 80,
+                                    color: Colors.grey[400],
+                                  ),
+                                  SizedBox(height: 16),
+                                  Text(
+                                    'Belum ada artikel yang disimpan.',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                            : ListView.builder(
+                              itemCount: bookmarkedArticles.length,
+                              itemBuilder: (context, index) {
+                                final article = bookmarkedArticles[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder:
+                                    //         (context) => NewsDetailPage(
+                                    //           article: article,
+                                    //           onToggleBookmark: onToggleBookmark,
+                                    //         ),
+                                    //   ),
+                                    // );
+                                  },
+                                  child: Card(
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 3,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(12),
+                                            topRight: Radius.circular(12),
+                                          ),
+                                          child: Image.network(
+                                            '$article.featuredImageUrl!',
+                                            height: 180,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (
+                                              context,
+                                              error,
+                                              stackTrace,
+                                            ) {
+                                              return Container(
+                                                height: 180,
+                                                width: double.infinity,
+                                                color: Colors.grey[300],
+                                                child: Image.asset(
+                                                  'assets/images/article3.png',
+                                                  height: 180,
+                                                  width: double.infinity,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        Consumer<BookmarkService>(
+                                          builder:
+                                              (
+                                                ctx,
+                                                bookmarkService,
+                                                child,
+                                              ) => Positioned(
+                                                top: 8,
+                                                right: 8,
+                                                child: Material(
+                                                  color: Colors.transparent,
+                                                  child: IconButton(
+                                                    icon: Icon(
+                                                      bookmarkService
+                                                              .isBookmarked(
+                                                                article.id!,
+                                                              )
+                                                          ? Icons.bookmark
+                                                          : Icons
+                                                              .bookmark_border,
+                                                      color:
+                                                          bookmarkService
+                                                                  .isBookmarked(
+                                                                    article.id!,
+                                                                  )
+                                                              ? Theme.of(
+                                                                context,
+                                                              ).primaryColor
+                                                              : Colors.grey,
+                                                      size: 28,
+                                                    ),
+                                                    onPressed: () {
+                                                      bookmarkService
+                                                          .toggleBookmark(
+                                                            article.id!,
+                                                          );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                article.title!,
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(height: 6),
+                                              Text(
+                                                'By: ${article.author!}',
+                                                style: TextStyle(
+                                                  color: Colors.orange,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(height: 6),
+                                              Text(
+                                                article.content!,
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.grey[700],
+                                                ),
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(height: 8),
+                                              // Text(
+                                              //   'By ${article.author} in ${article.category}',
+                                              //   style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey[600]),
+                                              // ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _currentBottomNavIndex,
+        currentIndex: 1,
         onTap: (index) {
-          // Logika navigasi untuk bottom nav bar dari halaman ini
-          // Misalnya, kembali ke MainPage atau halaman lain
           if (index == 0) {
-            // Contoh: Tombol Home
-            // Cek apakah MainPage sudah ada di stack, jika ya pop until, jika tidak pushReplacement
-            context.goNamed(RouteNames.home);
-          } else if (index == 1) {
-            // Contoh: Tombol Kategori
-            // Navigasi ke halaman kategori
-            // Sama seperti di atas, Anda mungkin ingin kembali ke MainPage dan pindah tab,
-            // atau push halaman kategori baru jika logikanya berbeda.
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
           } else if (index == 2) {
-            // Contoh: Tombol Profil
-            context.goNamed(RouteNames.profile);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfilePage()),
+            );
           }
         },
       ),

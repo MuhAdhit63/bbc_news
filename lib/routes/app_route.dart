@@ -59,29 +59,29 @@ class AppRouter {
           name: RouteNames.profile,
           pageBuilder: (context, state) => MaterialPage(child: ProfilePage()),
         ),
-        GoRoute(
-          path: '/bookmark',
-          name: RouteNames.bookmark,
-          pageBuilder: (context, GoRouterState state) {
-            final args = state.extra as BookmarkedArticlesPageArgs?;
+        // GoRoute(
+        //   path: '/bookmark',
+        //   name: RouteNames.bookmark,
+        //   pageBuilder: (context, GoRouterState state) {
+        //     final args = state.extra as BookmarkedArticlesPageArgs?;
 
-            if (args != null) {
-              return MaterialPage(
-                child: BookmarkedArticlesPage(
-                  allArticles: args.allArticles,
-                  onToggleBookmark: args.onToggleBookmark,
-                ),
-              );
-            } else {
-              return MaterialPage(
-                child: Scaffold(
-                  appBar: AppBar(title: Text("Error")),
-                  body: Center(child: Text("Argumen.....")),
-                ),
-              );
-            }
-          },
-        ),
+        //     if (args != null) {
+        //       return MaterialPage(
+        //         child: BookmarkedArticlesPage(
+        //           allArticles: args.allArticles,
+        //           onToggleBookmark: args.onToggleBookmark,
+        //         ),
+        //       );
+        //     } else {
+        //       return MaterialPage(
+        //         child: Scaffold(
+        //           appBar: AppBar(title: Text("Error")),
+        //           body: Center(child: Text("Argumen.....")),
+        //         ),
+        //       );
+        //     }
+        //   },
+        // ),
         GoRoute(
           path: '/history',
           name: RouteNames.history,
