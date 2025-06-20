@@ -1,38 +1,15 @@
 // lib/views/news_detail_page.dart
 import 'package:bbc_news/models/news_article.dart';
 import 'package:flutter/material.dart';
-import '../models/article_model.dart';
 
 class NewsDetailPage extends StatelessWidget {
   final NewsArticle article;
 
   const NewsDetailPage({super.key, required this.article});
 
-  String _formatDateManually(DateTime date) {
-    const List<String> monthsNames = [
-      'Januari',
-      'Februari',
-      'Maret',
-      'April',
-      'Mei',
-      'Juni',
-      'Juli',
-      'Agustus',
-      'September',
-      'Oktober',
-      'November',
-      'Desember',
-    ];
-    if (date.month < 1 || date.month > 12) {
-      return "${date.day} BulanTidakValid ${date.year}";
-    }
-    String monthName = monthsNames[date.month - 1];
-    return "${date.day} $monthName ${date.year}";
-  }
-
   @override
   Widget build(BuildContext context) {
-    const Color appBarBackgroundColor = Color(0xFFF9A825); // Oranye-kuning
+    const Color appBarBackgroundColor = Color(0xFFF9A825);
     const Color appBarTextColor = Colors.black87;
 
     return Scaffold(
@@ -59,7 +36,6 @@ class NewsDetailPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Judul Artikel
               Text(
                 article.title,
                 style: TextStyle(
@@ -70,7 +46,6 @@ class NewsDetailPage extends StatelessWidget {
               ),
               SizedBox(height: 12),
 
-              // Gambar Header Artikel
               ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.asset(
@@ -95,7 +70,6 @@ class NewsDetailPage extends StatelessWidget {
               ),
               SizedBox(height: 12),
 
-              // Info Penulis, Tanggal, Kategori & Tombol Bookmark
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -107,17 +81,6 @@ class NewsDetailPage extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  // IconButton(
-                  //   icon: Icon(
-                  //     article.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                  //     color: article.isBookmarked
-                  //         ? Theme.of(context).colorScheme.primary
-                  //         : Colors.grey[700],
-                  //     size: 26,
-                  //   ),
-                  //   onPressed: () => onToggleBookmark(article.id),
-                  //   tooltip: article.isBookmarked ? 'Hapus Bookmark' : 'Tambah Bookmark',
-                  // ),
                 ],
               ),
               SizedBox(height: 16),

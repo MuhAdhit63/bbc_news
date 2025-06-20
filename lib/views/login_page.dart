@@ -1,11 +1,7 @@
-// lib/views/login_page.dart
-import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/services/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'home_screen.dart'; // Asumsi MainPage ada di sini
-import 'register_page.dart'; // Untuk navigasi ke halaman register
+import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -20,11 +16,9 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   Future<void> _login() async {
-
     setState(() {
       _isLoading = true;
     });
-
 
     try {
       await Provider.of<AuthService>(
@@ -32,7 +26,6 @@ class _LoginPageState extends State<LoginPage> {
         listen: false,
       ).login(_emailController.text, _passwordController.text);
     } catch (error, stackTrace) {
-
       showDialog(
         context: context,
         builder:
@@ -65,18 +58,17 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Warna dari gambar
-    const Color primaryTextColor = Color(0xFFD4AF37); // Emas untuk teks judul dan link
-    const Color loginButtonColor = Color(0xFFFFD149); // Kuning untuk tombol login
-    const Color textFieldBackgroundColor = Color(0xFFE0E0E0); // Abu-abu muda untuk field
+    const Color primaryTextColor = Color(0xFFD4AF37);
+    const Color loginButtonColor = Color(0xFFFFD149);
+    const Color textFieldBackgroundColor = Color(0xFFE0E0E0);
 
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFFF9C74F).withOpacity(0.8), // Oranye-kuning di atas
-              Color(0xFF4D908E).withOpacity(0.7), // Biru-abu di bawah
+              Color(0xFFF9C74F).withOpacity(0.8),
+              Color(0xFF4D908E).withOpacity(0.7),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -87,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start, // Untuk "Login" title
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Login",
@@ -101,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: const EdgeInsets.all(70.0),
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/logo.png'), // Ganti dengan path logo Anda
+                      image: AssetImage('assets/images/logo.png'),
                       fit: BoxFit.cover,
                       opacity: 0.5,
                     ),
@@ -118,9 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      SizedBox(height: 5), // Kompensasi untuk logo
-
-                      // Email Field
+                      SizedBox(height: 5),
                       TextField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
@@ -132,12 +122,14 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: BorderSide.none,
                           ),
-                          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 15,
+                          ),
                         ),
                       ),
                       SizedBox(height: 20),
 
-                      // Password Field
                       TextField(
                         controller: _passwordController,
                         obscureText: true,
@@ -149,18 +141,26 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: BorderSide.none,
                           ),
-                          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 15,
+                          ),
                         ),
                       ),
-                      SizedBox(height: 25), // Jarak sebelum logo bawah
+                      SizedBox(height: 25),
                       SizedBox(height: 25),
 
-                      // Login Button
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: loginButtonColor,
-                          padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 80,
+                            vertical: 15,
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -173,7 +173,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 25),
-                // Switch to Register
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -183,7 +182,12 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        context.goNamed(RouteNames.register); 
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RegisterPage(),
+                          ),
+                        );
                       },
                       child: Text(
                         'Register',
@@ -197,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20), // Padding bawah
+                SizedBox(height: 20),
               ],
             ),
           ),

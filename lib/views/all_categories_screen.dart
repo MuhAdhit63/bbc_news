@@ -13,7 +13,6 @@ class AllCategoriesScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF7F7F7),
       body: Column(
         children: [
-          // Header
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: const BoxDecoration(
@@ -60,7 +59,6 @@ class AllCategoriesScreen extends StatelessWidget {
             ),
           ),
 
-          // Konten
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(16),

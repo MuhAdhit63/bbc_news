@@ -5,7 +5,6 @@ import 'package:bbc_news/views/hiburan_screen.dart';
 import 'package:bbc_news/views/politic_screen.dart';
 import 'package:bbc_news/views/sport_screen.dart';
 import 'package:flutter/material.dart';
-import '../views/detail_page.dart';
 
 class CategoryButton extends StatelessWidget {
   final IconData icon;
@@ -27,40 +26,30 @@ class CategoryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (navigationPageName == "politics"){
+        if (navigationPageName == "politics") {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => PoliticScreen()
-            )
+            MaterialPageRoute(builder: (context) => PoliticScreen()),
           );
         } else if (navigationPageName == "entertainment") {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => HiburanScreen()
-            )
+            MaterialPageRoute(builder: (context) => HiburanScreen()),
           );
         } else if (navigationPageName == "sports") {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => SportScreen()
-            )
+            MaterialPageRoute(builder: (context) => SportScreen()),
           );
         } else if (navigationPageName == "criminal") {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => CriminalScreen()
-            )
+            MaterialPageRoute(builder: (context) => CriminalScreen()),
           );
         } else if (navigationPageName == "all") {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => AllCategoriesScreen()
-            )
+            MaterialPageRoute(builder: (context) => AllCategoriesScreen()),
           );
         }
         // Navigator.push(
@@ -82,18 +71,18 @@ class CategoryButton extends StatelessWidget {
                   spreadRadius: 1,
                   blurRadius: 3,
                   offset: Offset(0, 2),
-                )
-              ]
+                ),
+              ],
             ),
             child: Icon(icon, color: iconColor, size: 28.0),
           ),
-          if(label.isNotEmpty) AppSpacing.vertical(6.0),
-          if(label.isNotEmpty)
+          if (label.isNotEmpty) AppSpacing.vertical(6.0),
+          if (label.isNotEmpty)
             Text(
               label,
               style: TextStyle(fontSize: 10.0, color: Colors.black54),
               textAlign: TextAlign.center,
-            )
+            ),
         ],
       ),
     );

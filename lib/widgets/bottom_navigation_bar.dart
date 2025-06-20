@@ -8,16 +8,13 @@ class CustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex; // Tanda
   final Function(int)? onTap; // Callback untuk menangani perubahan indeks
 
-  const CustomBottomNavigationBar({
-    Key? key,
-    this.currentIndex = 0,
-    this.onTap,
-  }) : super(key: key); 
+  const CustomBottomNavigationBar({Key? key, this.currentIndex = 0, this.onTap})
+    : super(key: key);
 
   void _navigateToPage(BuildContext context, String pageName) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => DetailPage(pageTitle: pageName),)
+      MaterialPageRoute(builder: (context) => DetailPage(pageTitle: pageName)),
     );
   }
 
@@ -33,14 +30,14 @@ class CustomBottomNavigationBar extends StatelessWidget {
           topLeft: Radius.circular(20.0),
           topRight: Radius.circular(20.0),
         ),
-        boxShadow:  [
+        boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.3),
             spreadRadius: 1,
             blurRadius: 5,
-            offset: Offset(0, -2), 
+            offset: Offset(0, -2),
           ),
-        ]
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.only(
@@ -49,11 +46,13 @@ class CustomBottomNavigationBar extends StatelessWidget {
         ),
         child: BottomNavigationBar(
           currentIndex: currentIndex,
-          onTap: onTap ?? (index) {
-            if (index == 0) context.goNamed(RouteNames.home);
-            if (index == 1) context.goNamed(RouteNames.bookmark);
-            if (index == 2) context.goNamed(RouteNames.profile);
-          },
+          onTap:
+              onTap ??
+              (index) {
+                if (index == 0) context.goNamed(RouteNames.home);
+                if (index == 1) context.goNamed(RouteNames.bookmark);
+                if (index == 2) context.goNamed(RouteNames.profile);
+              },
           type: BottomNavigationBarType.fixed,
           selectedItemColor: activeColor,
           unselectedItemColor: inactiveColor,
@@ -76,7 +75,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
               activeIcon: Icon(Icons.person),
               label: 'Profil',
             ),
-
           ],
         ),
       ),

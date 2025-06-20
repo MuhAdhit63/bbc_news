@@ -1,5 +1,3 @@
-// lib/views/bookmarked_articles_page.dart
-import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/services/bookmark_service.dart';
 import 'package:bbc_news/services/news_service.dart';
 import 'package:bbc_news/views/home_screen.dart';
@@ -7,8 +5,6 @@ import 'package:bbc_news/views/news_detail_page.dart';
 import 'package:bbc_news/views/profil_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/article_model.dart';
-import '../widgets/news_card.dart';
 import '../widgets/bottom_navigation_bar.dart';
 
 class BookmarkedArticlesPage extends StatelessWidget {
@@ -16,10 +12,7 @@ class BookmarkedArticlesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final bookmarkedArticles = _getBookmarkedArticles();
-
-    // Warna AppBar seperti di gambar referensi (BBCerita.com)
-    const Color appBarBackgroundColor = Color(0xFFF9A825); // Oranye-kuning
+    const Color appBarBackgroundColor = Color(0xFFF9A825);
     const Color appBarTextColor = Colors.black87;
 
     return Scaffold(
@@ -27,7 +20,7 @@ class BookmarkedArticlesPage extends StatelessWidget {
         backgroundColor: appBarBackgroundColor,
         elevation: 1,
         title: Text(
-          'BBCerita.com', // Sesuai gambar referensi
+          'BBCerita.com',
           style: TextStyle(
             color: appBarTextColor,
             fontWeight: FontWeight.bold,
@@ -35,9 +28,7 @@ class BookmarkedArticlesPage extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(
-          color: appBarTextColor,
-        ), // Untuk tombol kembali
+        iconTheme: IconThemeData(color: appBarTextColor),
       ),
       body: Consumer<BookmarkService>(
         builder: (context, bookmarkService, child) {
@@ -93,16 +84,15 @@ class BookmarkedArticlesPage extends StatelessWidget {
                                 final article = bookmarkedArticles[index];
                                 return GestureDetector(
                                   onTap: () {
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder:
-                                    //         (context) => NewsDetailPage(
-                                    //           article: article,
-                                    //           onToggleBookmark: onToggleBookmark,
-                                    //         ),
-                                    //   ),
-                                    // );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => NewsDetailPage(
+                                              article: article,
+                                            ),
+                                      ),
+                                    );
                                   },
                                   child: Card(
                                     margin: EdgeInsets.symmetric(
@@ -224,10 +214,6 @@ class BookmarkedArticlesPage extends StatelessWidget {
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                               SizedBox(height: 8),
-                                              // Text(
-                                              //   'By ${article.author} in ${article.category}',
-                                              //   style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey[600]),
-                                              // ),
                                             ],
                                           ),
                                         ),

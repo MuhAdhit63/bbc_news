@@ -1,5 +1,3 @@
-// lib/views/main_page.dart
-import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/services/auth_service.dart';
 import 'package:bbc_news/services/bookmark_service.dart';
 import 'package:bbc_news/services/news_service.dart';
@@ -7,14 +5,10 @@ import 'package:bbc_news/views/bookmark_articles_page.dart';
 import 'package:bbc_news/views/my_news_page.dart';
 import 'package:bbc_news/views/news_detail_page.dart';
 import 'package:bbc_news/views/profil_screen.dart';
-import 'package:bbc_news/views/reading_history_page.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../models/article_model.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/category_button.dart';
-import '../widgets/news_card.dart';
 import 'detail_page.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,8 +18,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentBottomNavIndex = 0;
-  late List<Article> _articles;
-  List<Article> _readHistoryArticles = [];
 
   @override
   void initState() {
@@ -44,54 +36,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _toggleBookmark(String articleId) {
-    setState(() {
-      final articleIndex = _articles.indexWhere(
-        (article) => article.id == articleId,
-      );
-      if (articleIndex != -1) {
-        _articles[articleIndex].isBookmarked =
-            !_articles[articleIndex].isBookmarked;
-      }
-      final historyIndex = _readHistoryArticles.indexWhere(
-        (article) => article.id == articleId,
-      );
-      if (historyIndex != -1) {
-        _readHistoryArticles[historyIndex].isBookmarked =
-            _articles[articleIndex].isBookmarked;
-      }
-    });
-  }
-
-  void _addArticleToHistory(Article article) {
-    setState(() {
-      _readHistoryArticles.removeWhere((a) => a.id == article.id);
-      _readHistoryArticles.insert(0, article);
-
-      if (_readHistoryArticles.length > 10) {
-        _readHistoryArticles = _readHistoryArticles.sublist(0, 10);
-      }
-    });
-  }
-
-  // void _navigateToNewsDetail(Article article) {
-  //   _addArticleToHistory(article);
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder:
-  //           (context) => NewsDetailPage(),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthService>(context, listen: false).user;
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.grey[200], // Latar belakang utama halaman
+      backgroundColor: Colors.grey[200],
       body: Consumer<NewsService>(
         builder: (context, newsService, child) {
           if (newsService.isLoading) {
@@ -115,17 +66,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header Section (Search Bar and Image)
                     _buildHeader(context, screenWidth),
 
-                    // User Info Card
                     Container(
                       margin: EdgeInsets.only(
                         left: 20,
                         right: 20,
                         top: 16,
                         bottom: 20,
-                      ), // Geser ke atas sedikit
+                      ),
                       padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         border: Border.all(
@@ -149,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             radius: 22,
                             backgroundImage: AssetImage(
                               'assets/images/logo.png',
-                            ), // GANTI INI
+                            ),
                             backgroundColor: Colors.grey[200],
                           ),
                           SizedBox(width: 12),
@@ -177,10 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                    // Categories Section
                     _buildCategoriesSection(context),
 
-                    // News Articles Section
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16.0,
@@ -211,8 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ListView.builder(
                       shrinkWrap: true,
-                      physics:
-                          NeverScrollableScrollPhysics(), // Agar bisa di-scroll di dalam SingleChildScrollView
+                      physics: NeverScrollableScrollPhysics(),
                       itemCount: newsList.length,
                       itemBuilder: (context, index) {
                         final article = newsList[index];
@@ -222,7 +168,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => NewsDetailPage(article: article,),
+                                  builder:
+                                      (context) =>
+                                          NewsDetailPage(article: article),
                                 ),
                               );
                             },
@@ -342,10 +290,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         SizedBox(height: 8),
-                                        // Text(
-                                        //   'By ${article.author} in ${article.category}',
-                                        //   style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey[600]),
-                                        // ),
                                       ],
                                     ),
                                   ),
@@ -367,11 +311,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentBottomNavIndex,
         onTap: (index) {
-          // Logika untuk bottom navigation jika diperlukan state di HomeScreen
-          // Contoh: setState(() => _currentBottomNavIndex = index);
-          // Atau navigasi langsung seperti yang sudah diimplementasikan di widgetnya
           if (index == 0) {
-            // Anda sudah di Beranda atau bisa refresh/kembali ke atas
           } else if (index == 1) {
             Navigator.push(
               context,
@@ -391,16 +331,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildHeader(BuildContext context, double screenWidth) {
     return Stack(
       children: [
-        // Background Image (Header)
         Container(
-          height: 220, // Sesuaikan tinggi
+          height: 220,
           width: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/article2.png'), // GANTI INI
+              image: AssetImage('assets/images/article2.png'),
               fit: BoxFit.cover,
               colorFilter: ColorFilter.mode(
-                // Efek gelap pada gambar
                 Colors.orange.withOpacity(0.4),
                 BlendMode.darken,
               ),
@@ -412,7 +350,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        // Content on Header
         Positioned.fill(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -424,7 +361,6 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 10),
-                // Search Bar
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 15),
                   decoration: BoxDecoration(
@@ -449,12 +385,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         (value) => _navigateToDetail("Hasil Pencarian: $value"),
                   ),
                 ),
-                Spacer(), // Mendorong teks ke bawah
+                Spacer(),
                 Text(
                   "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18, // Sesuaikan ukuran
+                    fontSize: 18,
                     fontWeight: FontWeight.w600,
                     shadows: [
                       Shadow(
@@ -465,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 25), // Jarak dari bawah header
+                SizedBox(height: 25),
               ],
             ),
           ),
@@ -501,7 +437,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: const Color.fromARGB(255, 253, 190, 108),
             width: 1,
           ),
-          color: Colors.grey[200], // Warna latar tombol ikon
+          color: Colors.grey[200],
           borderRadius: BorderRadius.circular(25),
         ),
         child: Icon(icon, color: Colors.grey[700], size: 22),
@@ -518,7 +454,6 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Tombol Kategori
               CategoryButton(
                 icon: Icons.account_balance_outlined,
                 label: 'Politics',

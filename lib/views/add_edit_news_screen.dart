@@ -17,12 +17,10 @@ class _AddEditNewsScreenState extends State<AddEditNewsScreen> {
   static const Color appBarBackgroundColor = Color(0xFFF9A825);
   static const Color appBarTextColor = Colors.black87;
 
-  // Controller untuk setiap field
   late TextEditingController _titleController;
   late TextEditingController _contentController;
   late TextEditingController _summaryController;
   late TextEditingController _categoryController;
-  // 1. Tambahkan TextEditingController baru untuk URL gambar
   late TextEditingController _imageUrlController;
 
   bool _isLoading = false;
@@ -30,7 +28,6 @@ class _AddEditNewsScreenState extends State<AddEditNewsScreen> {
   @override
   void initState() {
     super.initState();
-    // Inisialisasi semua controller
     _titleController = TextEditingController(text: widget.article?.title ?? '');
     _contentController = TextEditingController(
       text: widget.article?.content ?? '',
@@ -42,8 +39,6 @@ class _AddEditNewsScreenState extends State<AddEditNewsScreen> {
       text: widget.article?.category ?? '',
     );
 
-    // 2. Inisialisasi controller untuk imageUrl
-    // Jika sedang mengedit, isi dengan data yang ada. Jika tidak, kosongkan.
     _imageUrlController = TextEditingController(
       text: widget.article?.featuredImageUrl ?? '',
     );
@@ -51,7 +46,6 @@ class _AddEditNewsScreenState extends State<AddEditNewsScreen> {
 
   @override
   void dispose() {
-    // 5. Jangan lupa dispose semua controller untuk menghindari memory leak
     _titleController.dispose();
     _contentController.dispose();
     _summaryController.dispose();
@@ -61,7 +55,6 @@ class _AddEditNewsScreenState extends State<AddEditNewsScreen> {
   }
 
   Future<void> _saveForm() async {
-    // Validasi form
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -72,18 +65,15 @@ class _AddEditNewsScreenState extends State<AddEditNewsScreen> {
     final apiService = ApiService(token);
 
     try {
-      // 4. Sertakan nilai dari semua controller saat membuat objek NewsArticle
       final newArticle = NewsArticle(
         id: widget.article?.id,
         title: _titleController.text,
         content: _contentController.text,
         summary: _summaryController.text,
         category: _categoryController.text,
-        featuredImageUrl:
-            _imageUrlController.text, // <-- Ambil nilai dari controller
-        tags: widget.article?.tags ?? ["general"], // Contoh, bisa dikembangkan
-        isPublished:
-            widget.article?.isPublished ?? true, // Contoh, bisa dikembangkan
+        featuredImageUrl: _imageUrlController.text,
+        tags: widget.article?.tags ?? ["general"],
+        isPublished: widget.article?.isPublished ?? true,
       );
 
       if (widget.article == null) {
@@ -93,7 +83,6 @@ class _AddEditNewsScreenState extends State<AddEditNewsScreen> {
         // Mode Edit
         await apiService.updateNews(widget.article!.id!, newArticle);
       }
-      // Kembali ke halaman sebelumnya jika sukses
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       if (mounted) {
@@ -141,10 +130,6 @@ class _AddEditNewsScreenState extends State<AddEditNewsScreen> {
           ),
         ),
         centerTitle: true,
-        // title: Text(widget.article == null ? 'Tambah Berita' : 'Edit Berita'),
-        // actions: [
-        //   IconButton(icon: const Icon(Icons.save), onPressed: _saveForm, tooltip: 'Simpan')
-        // ],
       ),
       body:
           _isLoading
@@ -197,7 +182,6 @@ class _AddEditNewsScreenState extends State<AddEditNewsScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // 3. Tambahkan TextFormField baru untuk URL Gambar
                       TextFormField(
                         controller: _imageUrlController,
                         decoration: const InputDecoration(
@@ -205,8 +189,7 @@ class _AddEditNewsScreenState extends State<AddEditNewsScreen> {
                           hintText: 'https://contoh.com/gambar.jpg',
                           border: OutlineInputBorder(),
                         ),
-                        keyboardType:
-                            TextInputType.url, // Keyboard khusus untuk URL
+                        keyboardType: TextInputType.url,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'URL Gambar tidak boleh kosong';

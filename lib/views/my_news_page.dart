@@ -1,13 +1,9 @@
-// lib/views/reading_history_page.dart
 import 'package:bbc_news/models/news_article.dart';
 import 'package:bbc_news/services/api_service.dart';
 import 'package:bbc_news/services/auth_service.dart';
 import 'package:bbc_news/views/add_edit_news_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/article_model.dart';
-import '../widgets/history_article_card.dart'; // Impor kartu riwayat
-import '../widgets/bottom_navigation_bar.dart'; // Impor bottom nav jika perlu
 
 class MyNewsPage extends StatefulWidget {
   const MyNewsPage({super.key});
@@ -162,13 +158,12 @@ class _MyNewsPageState extends State<MyNewsPage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Gambar Thumbnail
                         ClipRRect(
                           borderRadius: BorderRadius.circular(6.0),
                           child: Image.network(
                             '$article.featuredImageUrl!',
-                            width: 100, // Lebar gambar lebih kecil
-                            height: 80, // Tinggi gambar
+                            width: 100,
+                            height: 80,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
@@ -186,7 +181,6 @@ class _MyNewsPageState extends State<MyNewsPage> {
                           ),
                         ),
                         SizedBox(width: 12),
-                        // Judul dan Ringkasan
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,17 +203,14 @@ class _MyNewsPageState extends State<MyNewsPage> {
                                   fontSize: 13,
                                   color: Colors.grey[700],
                                 ),
-                                maxLines: 2, // Lebih pendek dari NewsCard utama
+                                maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(
-                            Icons.edit_outlined,
-                            size: 16,
-                          ),
+                          icon: const Icon(Icons.edit_outlined, size: 16),
                           onPressed: () => _editArticle(article),
                         ),
                         IconButton(
@@ -239,14 +230,6 @@ class _MyNewsPageState extends State<MyNewsPage> {
           );
         },
       ),
-      // Halaman riwayat pada gambar tidak memiliki bottom navigation bar.
-      // Jika Anda ingin menambahkannya, uncomment baris di bawah.
-      // bottomNavigationBar: CustomBottomNavigationBar(
-      //   currentIndex: -1, // Tidak ada yang aktif
-      //   onTap: (idx) {
-      //     // Logika navigasi jika bottom nav ditekan dari halaman ini
-      //   },
-      // ),
       floatingActionButton: FloatingActionButton(
         child: Text(
           'Add',

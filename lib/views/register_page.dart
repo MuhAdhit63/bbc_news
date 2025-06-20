@@ -1,9 +1,8 @@
 // lib/views/register_page.dart
 import 'package:bbc_news/routes/route_names.dart';
+import 'package:bbc_news/views/auth_check_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'home_screen.dart'; // Asumsi MainPage ada di sini
-import 'login_page.dart'; // Untuk navigasi ke halaman login
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -11,16 +10,16 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Warna dari gambar
-    const Color primaryTextColor = Color(0xFFD4AF37); // Emas untuk teks judul dan link (konsisten)
-    const Color registerButtonColor = Color(0xFF6092C0); // Biru untuk tombol register
-    const Color textFieldBackgroundColor = Color(0xFFE0E0E0); // Abu-abu muda untuk field
+    const Color primaryTextColor = Color(0xFFD4AF37);
+    const Color registerButtonColor = Color(0xFF6092C0);
+    const Color textFieldBackgroundColor = Color(0xFFE0E0E0);
 
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFF4D908E).withOpacity(0.7), 
+              Color(0xFF4D908E).withOpacity(0.7),
               Color(0xFFF9C74F).withOpacity(0.8),
             ],
             begin: Alignment.topCenter,
@@ -32,21 +31,21 @@ class RegisterPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start, // Untuk "Register" title
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Register",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white, // Konsisten dengan login
+                    color: Colors.white,
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.all(50.0),
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/logo.png'), // Ganti dengan path logo Anda
+                      image: AssetImage('assets/images/logo.png'),
                       fit: BoxFit.cover,
                       opacity: 0.5,
                     ),
@@ -75,12 +74,14 @@ class RegisterPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: BorderSide.none,
                           ),
-                           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 15,
+                          ),
                         ),
                       ),
                       SizedBox(height: 20),
 
-                      // Email Field
                       TextField(
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
@@ -91,12 +92,14 @@ class RegisterPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: BorderSide.none,
                           ),
-                           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 15,
+                          ),
                         ),
                       ),
                       SizedBox(height: 20),
 
-                      // Password Field
                       TextField(
                         obscureText: true,
                         decoration: InputDecoration(
@@ -107,25 +110,32 @@ class RegisterPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: BorderSide.none,
                           ),
-                          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 15,
+                          ),
                         ),
                       ),
-                       SizedBox(height: 25),
+                      SizedBox(height: 25),
                       SizedBox(height: 25),
 
-                      // Register Button
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: registerButtonColor,
-                          padding: EdgeInsets.symmetric(horizontal: 70, vertical: 15),
-                          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 70,
+                            vertical: 15,
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           foregroundColor: Colors.white,
                         ),
                         onPressed: () {
-                          // TODO: Tambahkan logika registrasi di sini
                           context.goNamed(RouteNames.home);
                         },
                         child: Text('Register'),
@@ -134,7 +144,6 @@ class RegisterPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 25),
-                // Switch to Login
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -144,7 +153,12 @@ class RegisterPage extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        context.pushNamed(RouteNames.login);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AuthCheckScreen(),
+                          ),
+                        );
                       },
                       child: Text(
                         'Login',
@@ -158,7 +172,7 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 20), // Padding bawah
+                SizedBox(height: 20),
               ],
             ),
           ),

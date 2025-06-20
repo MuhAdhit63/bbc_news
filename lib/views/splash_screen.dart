@@ -1,13 +1,9 @@
 // lib/views/splash_screen.dart
 
 import 'dart:async';
-import 'package:bbc_news/routes/route_names.dart';
 import 'package:bbc_news/utils/helper.dart';
 import 'package:bbc_news/views/auth_check_screen.dart';
-import 'package:bbc_news/views/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import '../main.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

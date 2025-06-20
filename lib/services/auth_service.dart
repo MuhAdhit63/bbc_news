@@ -6,14 +6,12 @@ import '../models/user.dart';
 
 class AuthService with ChangeNotifier {
   String? _token;
-  User? _user; 
+  User? _user;
 
-  // Sesuaikan path jika berbeda
   final String _baseUrl = 'http://45.149.187.204:3000';
   final String _loginPath = '/api/auth/login';
   final String _profilePath = '/api/auth/me';
 
-  // Getters
   bool get isAuth => _token != null;
   String? get token => _token;
   User? get user => _user;
@@ -27,7 +25,7 @@ class AuthService with ChangeNotifier {
         url,
         headers: {'Authorization': 'Bearer $_token'},
       );
-      
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         _user = User.fromJson(responseData['body']['data']);
@@ -56,9 +54,8 @@ class AuthService with ChangeNotifier {
         if (_token != null) {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('authToken', _token!);
-          
-          await fetchAndSetUser(); 
 
+          await fetchAndSetUser();
         } else {
           throw Exception('Token tidak ditemukan di dalam respons server.');
         }
@@ -76,7 +73,7 @@ class AuthService with ChangeNotifier {
       return;
     }
     _token = prefs.getString('authToken');
-    
+
     await fetchAndSetUser();
   }
 

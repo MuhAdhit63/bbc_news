@@ -70,7 +70,6 @@ class CriminalScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                // Gambar utama kriminal
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
